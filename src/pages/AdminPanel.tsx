@@ -36,6 +36,7 @@ const AdminPanel = () => {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const t = useTranslation();
 
   useEffect(() => {
     const checkAccess = async () => {
