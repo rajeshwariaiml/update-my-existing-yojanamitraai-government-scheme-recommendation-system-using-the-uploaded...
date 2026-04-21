@@ -12,6 +12,7 @@ import { Plus, Pencil, Trash2, Loader2, ShieldCheck, ShieldAlert } from "lucide-
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface SchemeForm {
   scheme_name: string; category: string; target_group: string; income_limit: string;
