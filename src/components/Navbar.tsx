@@ -1,0 +1,114 @@
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Shield, Menu, X, User, LogOut, Bell } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import type { User as SupaUser } from "@supabase/supabase-js";
+import LanguageToggle from "@/components/LanguageToggle";
+import { useTranslation } from "@/context/LanguageContext";
+
+const Navbar = () => {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState<SupaUser | null>(null);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const t = useTranslation();
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user ?? null));
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const displayName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "";
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast({ title: "Logged out successfully", description: "See you next time!" });
+    navigate("/");
+  };
+
+  const navLinks = [
+    { to: "/", label: t("home") },
+    { to: "/find-schemes", label: t("find_schemes") },
+    ...(user ? [{ to: "/dashboard", label: t("dashboard") }] : []),
+  ];
+
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-50 glass">
+      <div className="container mx-auto flex items-center justify-between py-3 px-4">
+        <Link to="/" className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+            <Shield className="h-4 w-4 text-primary-foreground" />
+          </div>
+          <div className="leading-none">
+            <span className="font-display text-lg font-bold text-foreground block">YojanaMitra</span>
+            <span className="text-[10px] text-muted-foreground font-medium tracking-wide">AI</span>
+          </div>
+        </Link>
+
+        <div className="hidden md:flex items-center gap-6">
+          {navLinks.map(l => (
+            <Link key={l.to} to={l.to} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">{l.label}</Link>
+          ))}
+        </div>
+
+        <div className="hidden md:flex items-center gap-2">
+          <LanguageToggle />
+          {user ? (
+            <>
+              <Link to="/dashboard">
+                <Button variant="ghost" size="sm"><Bell className="h-4 w-4" /></Button>
+              </Link>
+              <Link to="/dashboard">
+                <Button variant="ghost" size="sm" className="gap-1.5">
+                  <User className="h-4 w-4" />
+                  <span className="max-w-[120px] truncate">{displayName}</span>
+                </Button>
+              </Link>
+              <Button variant="outline" size="sm" onClick={handleLogout} className="gap-1.5">
+                <LogOut className="h-4 w-4" /> {t("logout")}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link to="/login"><Button variant="ghost" size="sm">{t("login")}</Button></Link>
+              <Link to="/signup"><Button size="sm">{t("signup")}</Button></Link>
+            </>
+          )}
+        </div>
+
+        <button className="md:hidden text-foreground" onClick={() => setMobileOpen(!mobileOpen)}>
+          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
+      </div>
+
+      {mobileOpen && (
+        <div className="md:hidden bg-card border-t border-border px-4 pb-4 animate-fade-in">
+          <div className="flex flex-col gap-2 pt-2">
+            {navLinks.map(l => (
+              <Link key={l.to} to={l.to} className="text-sm py-2 font-medium" onClick={() => setMobileOpen(false)}>{l.label}</Link>
+            ))}
+            <div className="pt-2"><LanguageToggle className="w-full justify-center" /></div>
+            {user ? (
+              <>
+                <p className="text-xs text-muted-foreground py-1">{t("signed_in_as")} <strong>{displayName}</strong></p>
+                <Button variant="outline" size="sm" onClick={() => { handleLogout(); setMobileOpen(false); }}>{t("logout")}</Button>
+              </>
+            ) : (
+              <div className="flex gap-2 pt-2">
+                <Link to="/login" className="flex-1"><Button variant="ghost" size="sm" className="w-full">{t("login")}</Button></Link>
+                <Link to="/signup" className="flex-1"><Button size="sm" className="w-full">{t("signup")}</Button></Link>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+};
+
+export default Navbar;
