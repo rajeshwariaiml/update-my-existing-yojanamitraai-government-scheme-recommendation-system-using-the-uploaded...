@@ -11,6 +11,7 @@ import { Search, MessageSquare, FileText, Loader2 } from "lucide-react";
 import SchemeCard, { type SchemeResult } from "@/components/SchemeCard";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "@/context/LanguageContext";
 
 const states = ["All India", "Andhra Pradesh", "Bihar", "Delhi", "Gujarat", "Haryana", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Punjab", "Rajasthan", "Tamil Nadu", "Telangana", "Uttar Pradesh", "West Bengal"];
 const occupations = ["Student", "Farmer", "Self-employed", "Salaried", "Unemployed", "Retired", "Homemaker", "Entrepreneur"];
@@ -24,6 +25,7 @@ const FindSchemes = () => {
   const [loading, setLoading] = useState(false);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const { toast } = useToast();
+  const t = useTranslation();
 
   const handleNlpSearch = async () => {
     if (!nlpQuery.trim()) { toast({ title: "Please describe yourself", variant: "destructive" }); return; }
@@ -36,7 +38,6 @@ const FindSchemes = () => {
       setResults(data?.recommendations ?? []);
     } catch {
       toast({ title: "Error fetching recommendations", variant: "destructive" });
-      // Fallback to local matching
       await handleLocalFallback(nlpQuery);
     }
     setLoading(false);
@@ -57,8 +58,7 @@ const FindSchemes = () => {
     setLoading(false);
   };
 
-  const handleLocalFallback = async (query?: string) => {
-    // Fetch all schemes and do client-side matching
+  const handleLocalFallback = async (_query?: string) => {
     const { data: schemes } = await supabase.from("schemes").select("*").eq("is_active", true);
     if (!schemes || schemes.length === 0) {
       setResults([]);
@@ -70,30 +70,16 @@ const FindSchemes = () => {
     const scored: SchemeResult[] = schemes.map((s: any) => {
       let score = 0;
       const missing: string[] = [];
-
-      // Age check
       if (age >= (s.min_age || 0) && age <= (s.max_age || 100)) score += 20;
       else missing.push(`Age must be ${s.min_age}-${s.max_age}`);
-
-      // Income check
       if (!s.income_limit || income <= s.income_limit) score += 20;
       else missing.push(`Income must be under ₹${s.income_limit?.toLocaleString()}`);
-
-      // State check
       if (s.state === "All India" || s.state === formData.state) score += 15;
       else missing.push(`Must be from ${s.state}`);
-
-      // Gender check
       if (s.gender === "All" || s.gender === formData.gender) score += 10;
       else missing.push(`${s.gender} applicants only`);
-
-      // Education
       if (!s.education_level || s.education_level === formData.education_level) score += 15;
-
-      // Occupation
       if (!s.occupation || s.occupation === formData.occupation) score += 10;
-
-      // Category
       if (s.target_group === "All" || s.target_group?.toLowerCase().includes(formData.category?.toLowerCase() || "")) score += 10;
 
       score = Math.min(score, 98);
@@ -141,29 +127,29 @@ const FindSchemes = () => {
       <main className="flex-1 pt-24 pb-16 px-4">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-8 animate-fade-up">
-            <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">Find Government Schemes</h1>
-            <p className="text-muted-foreground">Describe yourself naturally or fill in your details — our AI will find the best schemes for you.</p>
+            <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">{t("find_title")}</h1>
+            <p className="text-muted-foreground">{t("find_subtitle")}</p>
           </div>
 
           {!results ? (
             <Tabs defaultValue="conversational" className="animate-fade-up">
               <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="conversational" className="gap-2"><MessageSquare className="h-4 w-4" /> Conversational</TabsTrigger>
-                <TabsTrigger value="form" className="gap-2"><FileText className="h-4 w-4" /> Detailed Form</TabsTrigger>
+                <TabsTrigger value="conversational" className="gap-2"><MessageSquare className="h-4 w-4" /> {t("tab_conversational")}</TabsTrigger>
+                <TabsTrigger value="form" className="gap-2"><FileText className="h-4 w-4" /> {t("tab_form")}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="conversational">
                 <div className="bg-card border border-border rounded-lg p-6 space-y-4">
-                  <Label className="text-base font-display font-semibold">Tell us about yourself</Label>
+                  <Label className="text-base font-display font-semibold">{t("tell_about_yourself")}</Label>
                   <Textarea
-                    placeholder='Example: "I am a 22-year-old female student from Karnataka, SC category, family income below 2 lakhs. I am looking for scholarships and education loans."'
+                    placeholder={t("search_placeholder_long")}
                     className="min-h-[120px] text-sm"
                     value={nlpQuery}
                     onChange={e => setNlpQuery(e.target.value)}
                   />
                   <Button onClick={handleNlpSearch} disabled={loading} size="lg" className="w-full gap-2">
                     {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-                    {loading ? "Analyzing..." : "Find Matching Schemes"}
+                    {loading ? t("analyzing") : t("find_matching")}
                   </Button>
                 </div>
               </TabsContent>
@@ -172,68 +158,68 @@ const FindSchemes = () => {
                 <div className="bg-card border border-border rounded-lg p-6 space-y-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Age *</Label>
+                      <Label>{t("age")} *</Label>
                       <Input type="number" placeholder="e.g. 25" value={formData.age} onChange={e => setFormData({ ...formData, age: e.target.value })} />
                     </div>
                     <div className="space-y-2">
-                      <Label>Gender</Label>
+                      <Label>{t("gender")}</Label>
                       <Select onValueChange={v => setFormData({ ...formData, gender: v })}>
-                        <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectTrigger><SelectValue placeholder={t("select")} /></SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Male">Male</SelectItem>
-                          <SelectItem value="Female">Female</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
+                          <SelectItem value="Male">{t("male")}</SelectItem>
+                          <SelectItem value="Female">{t("female")}</SelectItem>
+                          <SelectItem value="Other">{t("other")}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Annual Income (₹)</Label>
+                      <Label>{t("income")}</Label>
                       <Input type="number" placeholder="e.g. 200000" value={formData.income} onChange={e => setFormData({ ...formData, income: e.target.value })} />
                     </div>
                     <div className="space-y-2">
-                      <Label>Occupation</Label>
+                      <Label>{t("occupation")}</Label>
                       <Select onValueChange={v => setFormData({ ...formData, occupation: v })}>
-                        <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectTrigger><SelectValue placeholder={t("select")} /></SelectTrigger>
                         <SelectContent>
                           {occupations.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Education Level</Label>
+                      <Label>{t("education_level")}</Label>
                       <Select onValueChange={v => setFormData({ ...formData, education_level: v })}>
-                        <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectTrigger><SelectValue placeholder={t("select")} /></SelectTrigger>
                         <SelectContent>
                           {educationLevels.map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>State *</Label>
+                      <Label>{t("state")} *</Label>
                       <Select onValueChange={v => setFormData({ ...formData, state: v })}>
-                        <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectTrigger><SelectValue placeholder={t("select")} /></SelectTrigger>
                         <SelectContent>
                           {states.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Category</Label>
+                      <Label>{t("category")}</Label>
                       <Select onValueChange={v => setFormData({ ...formData, category: v })}>
-                        <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectTrigger><SelectValue placeholder={t("select")} /></SelectTrigger>
                         <SelectContent>
                           {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Goals</Label>
+                      <Label>{t("goals")}</Label>
                       <Input placeholder="e.g. Higher education, Housing" value={formData.goals} onChange={e => setFormData({ ...formData, goals: e.target.value })} />
                     </div>
                   </div>
                   <Button onClick={handleFormSearch} disabled={loading} size="lg" className="w-full gap-2">
                     {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-                    {loading ? "Finding Schemes..." : "Get Recommendations"}
+                    {loading ? t("finding_schemes") : t("get_recommendations")}
                   </Button>
                 </div>
               </TabsContent>
@@ -242,14 +228,14 @@ const FindSchemes = () => {
             <div className="animate-fade-up">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="font-display text-2xl font-bold">{results.length} Schemes Found</h2>
-                  <p className="text-sm text-muted-foreground">Ranked by eligibility match</p>
+                  <h2 className="font-display text-2xl font-bold">{results.length} {t("schemes_found")}</h2>
+                  <p className="text-sm text-muted-foreground">{t("ranked_by_match")}</p>
                 </div>
-                <Button variant="outline" onClick={() => setResults(null)}>New Search</Button>
+                <Button variant="outline" onClick={() => setResults(null)}>{t("new_search")}</Button>
               </div>
               {results.length === 0 ? (
                 <div className="text-center py-16 text-muted-foreground">
-                  <p>No schemes found. Try adjusting your criteria or add more scheme data.</p>
+                  <p>{t("no_schemes_found")}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

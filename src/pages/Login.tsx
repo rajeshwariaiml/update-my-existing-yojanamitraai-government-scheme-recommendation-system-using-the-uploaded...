@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Shield, Loader2, LogIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import LanguageToggle from "@/components/LanguageToggle";
+import { useTranslation } from "@/context/LanguageContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,6 +15,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const t = useTranslation();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +50,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center px-4" style={{ background: "linear-gradient(135deg, hsl(220 72% 97%) 0%, hsl(210 20% 98%) 50%, hsl(152 40% 96%) 100%)" }}>
       <div className="w-full max-w-md bg-card border border-border rounded-lg p-8 shadow-[var(--shadow-card)] animate-fade-up">
+        <div className="flex justify-end mb-2"><LanguageToggle /></div>
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-4">
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
@@ -54,26 +58,26 @@ const Login = () => {
             </div>
             <span className="font-display text-xl font-bold">YojanaMitraAI</span>
           </Link>
-          <h1 className="font-display text-2xl font-bold">Welcome Back</h1>
-          <p className="text-sm text-muted-foreground mt-1">Sign in to access your scheme dashboard</p>
+          <h1 className="font-display text-2xl font-bold">{t("welcome_back")}</h1>
+          <p className="text-sm text-muted-foreground mt-1">{t("welcome_back_sub")}</p>
         </div>
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("email")}</Label>
             <Input id="email" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("password")}</Label>
             <Input id="password" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
           </div>
           <Button type="submit" disabled={loading} className="w-full gap-2">
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? t("signing_in") : t("sign_in")}
           </Button>
         </form>
 
         <div className="mt-4 p-3 bg-muted/50 rounded-lg border border-border">
-          <p className="text-xs text-muted-foreground text-center font-medium mb-1">Demo Accounts</p>
+          <p className="text-xs text-muted-foreground text-center font-medium mb-1">{t("demo_accounts")}</p>
           <div className="text-xs text-muted-foreground space-y-0.5">
             <p><strong>Admin:</strong> admin@yojanamitra.ai / Admin@123</p>
             <p><strong>User:</strong> demo@yojanamitra.ai / Demo@123</p>
@@ -81,7 +85,7 @@ const Login = () => {
         </div>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
-          Don't have an account? <Link to="/signup" className="text-primary font-medium hover:underline">Sign Up</Link>
+          {t("no_account")} <Link to="/signup" className="text-primary font-medium hover:underline">{t("signup")}</Link>
         </p>
       </div>
     </div>

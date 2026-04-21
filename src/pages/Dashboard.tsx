@@ -7,22 +7,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Search, Bookmark, Clock, Bell, User, Loader2 } from "lucide-react";
+import { Search, Bookmark, Clock, Bell, User, Loader2 } from "lucide-react";
 import SchemeCard, { type SchemeResult } from "@/components/SchemeCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { User as SupaUser } from "@supabase/supabase-js";
+import { useTranslation } from "@/context/LanguageContext";
 
 const Dashboard = () => {
   const [user, setUser] = useState<SupaUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<any>(null);
+  const [, setProfile] = useState<any>(null);
   const [savedSchemes, setSavedSchemes] = useState<SchemeResult[]>([]);
   const [recentRecs, setRecentRecs] = useState<SchemeResult[]>([]);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [profileForm, setProfileForm] = useState({ full_name: "", age: "", gender: "", income: "", occupation: "", education_level: "", state: "", district: "", category: "" });
   const navigate = useNavigate();
   const { toast } = useToast();
+  const t = useTranslation();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -132,8 +134,8 @@ const Dashboard = () => {
       <main className="flex-1 pt-24 pb-16 px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="mb-8 animate-fade-up">
-            <h1 className="font-display text-3xl font-bold mb-1">Welcome, {displayName}</h1>
-            <p className="text-muted-foreground">Your personalized scheme dashboard</p>
+            <h1 className="font-display text-3xl font-bold mb-1">{t("welcome")}, {displayName}</h1>
+            <p className="text-muted-foreground">{t("personalized_dashboard")}</p>
           </div>
 
           {/* Quick Actions */}
@@ -143,8 +145,8 @@ const Dashboard = () => {
                 <Search className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <h3 className="font-display font-semibold text-sm">Find Schemes</h3>
-                <p className="text-xs text-muted-foreground">Discover new schemes</p>
+                <h3 className="font-display font-semibold text-sm">{t("find_schemes")}</h3>
+                <p className="text-xs text-muted-foreground">{t("discover_new_schemes")}</p>
               </div>
             </Link>
             <div className="p-5 rounded-lg bg-card border border-border flex items-center gap-4">
@@ -152,8 +154,8 @@ const Dashboard = () => {
                 <Bookmark className="h-5 w-5 text-accent" />
               </div>
               <div>
-                <h3 className="font-display font-semibold text-sm">Saved Schemes</h3>
-                <p className="text-xs text-muted-foreground">{savedSchemes.length} saved</p>
+                <h3 className="font-display font-semibold text-sm">{t("saved_schemes")}</h3>
+                <p className="text-xs text-muted-foreground">{t("saved_count", { count: savedSchemes.length })}</p>
               </div>
             </div>
             <div className="p-5 rounded-lg bg-card border border-border flex items-center gap-4">
@@ -161,25 +163,25 @@ const Dashboard = () => {
                 <Bell className="h-5 w-5 text-civic-orange" />
               </div>
               <div>
-                <h3 className="font-display font-semibold text-sm">Notifications</h3>
-                <p className="text-xs text-muted-foreground">{notifications.filter(n => !n.is_read).length} unread</p>
+                <h3 className="font-display font-semibold text-sm">{t("notifications")}</h3>
+                <p className="text-xs text-muted-foreground">{t("unread_count", { count: notifications.filter(n => !n.is_read).length })}</p>
               </div>
             </div>
           </div>
 
           <Tabs defaultValue="saved" className="animate-fade-up">
             <TabsList className="mb-6">
-              <TabsTrigger value="saved" className="gap-1.5"><Bookmark className="h-4 w-4" /> Saved</TabsTrigger>
-              <TabsTrigger value="history" className="gap-1.5"><Clock className="h-4 w-4" /> History</TabsTrigger>
-              <TabsTrigger value="profile" className="gap-1.5"><User className="h-4 w-4" /> Profile</TabsTrigger>
-              <TabsTrigger value="notifications" className="gap-1.5"><Bell className="h-4 w-4" /> Alerts</TabsTrigger>
+              <TabsTrigger value="saved" className="gap-1.5"><Bookmark className="h-4 w-4" /> {t("saved")}</TabsTrigger>
+              <TabsTrigger value="history" className="gap-1.5"><Clock className="h-4 w-4" /> {t("history")}</TabsTrigger>
+              <TabsTrigger value="profile" className="gap-1.5"><User className="h-4 w-4" /> {t("profile")}</TabsTrigger>
+              <TabsTrigger value="notifications" className="gap-1.5"><Bell className="h-4 w-4" /> {t("alerts")}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="saved">
               {savedSchemes.length === 0 ? (
                 <div className="text-center py-16 text-muted-foreground">
                   <Bookmark className="h-10 w-10 mx-auto mb-3 opacity-30" />
-                  <p>No saved schemes yet. <Link to="/find-schemes" className="text-primary hover:underline">Find schemes</Link> to save.</p>
+                  <p>{t("no_saved_schemes")} <Link to="/find-schemes" className="text-primary hover:underline">{t("find_schemes_to_save")}</Link></p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -192,7 +194,7 @@ const Dashboard = () => {
               {recentRecs.length === 0 ? (
                 <div className="text-center py-16 text-muted-foreground">
                   <Clock className="h-10 w-10 mx-auto mb-3 opacity-30" />
-                  <p>No recommendation history yet.</p>
+                  <p>{t("no_history")}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -203,49 +205,49 @@ const Dashboard = () => {
 
             <TabsContent value="profile">
               <div className="bg-card border border-border rounded-lg p-6 max-w-2xl space-y-4">
-                <h3 className="font-display font-semibold text-lg">Your Profile</h3>
+                <h3 className="font-display font-semibold text-lg">{t("your_profile")}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Full Name</Label>
+                    <Label>{t("name")}</Label>
                     <Input value={profileForm.full_name} onChange={e => setProfileForm({ ...profileForm, full_name: e.target.value })} />
                   </div>
                   <div className="space-y-2">
-                    <Label>Age</Label>
+                    <Label>{t("age")}</Label>
                     <Input type="number" value={profileForm.age} onChange={e => setProfileForm({ ...profileForm, age: e.target.value })} />
                   </div>
                   <div className="space-y-2">
-                    <Label>Gender</Label>
+                    <Label>{t("gender")}</Label>
                     <Select value={profileForm.gender} onValueChange={v => setProfileForm({ ...profileForm, gender: v })}>
-                      <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder={t("select")} /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Male">Male</SelectItem>
-                        <SelectItem value="Female">Female</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
+                        <SelectItem value="Male">{t("male")}</SelectItem>
+                        <SelectItem value="Female">{t("female")}</SelectItem>
+                        <SelectItem value="Other">{t("other")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>Annual Income (₹)</Label>
+                    <Label>{t("income")}</Label>
                     <Input type="number" value={profileForm.income} onChange={e => setProfileForm({ ...profileForm, income: e.target.value })} />
                   </div>
                   <div className="space-y-2">
-                    <Label>State</Label>
+                    <Label>{t("state")}</Label>
                     <Input value={profileForm.state} onChange={e => setProfileForm({ ...profileForm, state: e.target.value })} />
                   </div>
                   <div className="space-y-2">
-                    <Label>District</Label>
+                    <Label>{t("district")}</Label>
                     <Input value={profileForm.district} onChange={e => setProfileForm({ ...profileForm, district: e.target.value })} />
                   </div>
                   <div className="space-y-2">
-                    <Label>Occupation</Label>
+                    <Label>{t("occupation")}</Label>
                     <Input value={profileForm.occupation} onChange={e => setProfileForm({ ...profileForm, occupation: e.target.value })} />
                   </div>
                   <div className="space-y-2">
-                    <Label>Category</Label>
+                    <Label>{t("category")}</Label>
                     <Input value={profileForm.category} onChange={e => setProfileForm({ ...profileForm, category: e.target.value })} />
                   </div>
                 </div>
-                <Button onClick={saveProfile} className="gap-2"><User className="h-4 w-4" /> Save Profile</Button>
+                <Button onClick={saveProfile} className="gap-2"><User className="h-4 w-4" /> {t("save_profile")}</Button>
               </div>
             </TabsContent>
 
@@ -253,13 +255,13 @@ const Dashboard = () => {
               {notifications.length === 0 ? (
                 <div className="text-center py-16 text-muted-foreground">
                   <Bell className="h-10 w-10 mx-auto mb-3 opacity-30" />
-                  <p>No notifications yet.</p>
+                  <p>{t("no_notifications")}</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {notifications.map(n => (
                     <div key={n.id} className={`p-4 rounded-lg border ${n.is_read ? "bg-card border-border" : "bg-civic-blue-light border-primary/20"}`}>
-                      <h4 className="font-display font-semibold text-sm">{n.title}</h4>
+                      <h4 className="font-display font-semibold text-sm">{n.title || t("upcoming_deadline")}</h4>
                       <p className="text-sm text-muted-foreground mt-1">{n.message}</p>
                       <span className="text-xs text-muted-foreground mt-2 block">{new Date(n.created_at).toLocaleDateString()}</span>
                     </div>
