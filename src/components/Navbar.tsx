@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Shield, Menu, X, User, LogOut, Bell } from "lucide-react";
+import { Menu, X, User, LogOut, Bell } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -41,12 +41,10 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 glass">
       <div className="container mx-auto flex items-center justify-between py-3 px-4">
         <Link to="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <Shield className="h-4 w-4 text-primary-foreground" />
-          </div>
+          <img src="/logo.png" alt="YojanaMitraAI Logo" className="w-8 h-8 object-contain" />
           <div className="leading-none">
-            <span className="font-display text-lg font-bold text-foreground block">YojanaMitra</span>
-            <span className="text-[10px] text-muted-foreground font-medium tracking-wide">AI</span>
+            <span className="font-display text-lg font-bold text-foreground block">YojanaMitraAI</span>
+            <span className="text-[10px] text-muted-foreground font-medium tracking-wide">Your Guide to Government Schemes</span>
           </div>
         </Link>
 
