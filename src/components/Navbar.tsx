@@ -5,12 +5,15 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { User as SupaUser } from "@supabase/supabase-js";
+import LanguageToggle from "@/components/LanguageToggle";
+import { useTranslation } from "@/context/LanguageContext";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<SupaUser | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const t = useTranslation();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -29,9 +32,9 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    { to: "/", label: "Home" },
-    { to: "/find-schemes", label: "Find Schemes" },
-    ...(user ? [{ to: "/dashboard", label: "Dashboard" }] : []),
+    { to: "/", label: t("home") },
+    { to: "/find-schemes", label: t("find_schemes") },
+    ...(user ? [{ to: "/dashboard", label: t("dashboard") }] : []),
   ];
 
   return (
@@ -54,6 +57,7 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-2">
+          <LanguageToggle />
           {user ? (
             <>
               <Link to="/dashboard">
@@ -66,13 +70,13 @@ const Navbar = () => {
                 </Button>
               </Link>
               <Button variant="outline" size="sm" onClick={handleLogout} className="gap-1.5">
-                <LogOut className="h-4 w-4" /> Logout
+                <LogOut className="h-4 w-4" /> {t("logout")}
               </Button>
             </>
           ) : (
             <>
-              <Link to="/login"><Button variant="ghost" size="sm">Login</Button></Link>
-              <Link to="/signup"><Button size="sm">Sign Up</Button></Link>
+              <Link to="/login"><Button variant="ghost" size="sm">{t("login")}</Button></Link>
+              <Link to="/signup"><Button size="sm">{t("signup")}</Button></Link>
             </>
           )}
         </div>
@@ -88,15 +92,16 @@ const Navbar = () => {
             {navLinks.map(l => (
               <Link key={l.to} to={l.to} className="text-sm py-2 font-medium" onClick={() => setMobileOpen(false)}>{l.label}</Link>
             ))}
+            <div className="pt-2"><LanguageToggle className="w-full justify-center" /></div>
             {user ? (
               <>
-                <p className="text-xs text-muted-foreground py-1">Signed in as <strong>{displayName}</strong></p>
-                <Button variant="outline" size="sm" onClick={() => { handleLogout(); setMobileOpen(false); }}>Logout</Button>
+                <p className="text-xs text-muted-foreground py-1">{t("signed_in_as")} <strong>{displayName}</strong></p>
+                <Button variant="outline" size="sm" onClick={() => { handleLogout(); setMobileOpen(false); }}>{t("logout")}</Button>
               </>
             ) : (
               <div className="flex gap-2 pt-2">
-                <Link to="/login" className="flex-1"><Button variant="ghost" size="sm" className="w-full">Login</Button></Link>
-                <Link to="/signup" className="flex-1"><Button size="sm" className="w-full">Sign Up</Button></Link>
+                <Link to="/login" className="flex-1"><Button variant="ghost" size="sm" className="w-full">{t("login")}</Button></Link>
+                <Link to="/signup" className="flex-1"><Button size="sm" className="w-full">{t("signup")}</Button></Link>
               </div>
             )}
           </div>
