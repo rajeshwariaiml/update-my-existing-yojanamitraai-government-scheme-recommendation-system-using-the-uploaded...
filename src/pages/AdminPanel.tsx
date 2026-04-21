@@ -131,9 +131,9 @@ const AdminPanel = () => {
         <main className="flex-1 pt-24 pb-16 px-4 flex items-center justify-center">
           <div className="text-center space-y-4">
             <ShieldAlert className="h-16 w-16 text-destructive mx-auto" />
-            <h1 className="font-display text-2xl font-bold">Access Denied</h1>
-            <p className="text-muted-foreground">You do not have admin privileges to access this panel.</p>
-            <Button onClick={() => navigate("/dashboard")}>Go to Dashboard</Button>
+            <h1 className="font-display text-2xl font-bold">{t("access_denied")}</h1>
+            <p className="text-muted-foreground">{t("access_denied_text")}</p>
+            <Button onClick={() => navigate("/dashboard")}>{t("go_to_dashboard")}</Button>
           </div>
         </main>
         <Footer />
@@ -149,15 +149,15 @@ const AdminPanel = () => {
           <div className="flex items-center gap-3 mb-8">
             <ShieldCheck className="h-7 w-7 text-primary" />
             <div>
-              <h1 className="font-display text-3xl font-bold">Admin Panel</h1>
-              <p className="text-sm text-muted-foreground">Manage government schemes and eligibility rules</p>
+              <h1 className="font-display text-3xl font-bold">{t("admin_panel")}</h1>
+              <p className="text-sm text-muted-foreground">{t("admin_subtitle")}</p>
             </div>
           </div>
 
           <Tabs defaultValue="add">
             <TabsList className="mb-6">
-              <TabsTrigger value="add" className="gap-1.5"><Plus className="h-4 w-4" /> {editingId ? "Edit" : "Add"} Scheme</TabsTrigger>
-              <TabsTrigger value="manage" className="gap-1.5"><Pencil className="h-4 w-4" /> Manage ({schemes.length})</TabsTrigger>
+              <TabsTrigger value="add" className="gap-1.5"><Plus className="h-4 w-4" /> {editingId ? t("edit_scheme") : t("add_scheme")}</TabsTrigger>
+              <TabsTrigger value="manage" className="gap-1.5"><Pencil className="h-4 w-4" /> {t("manage")} ({schemes.length})</TabsTrigger>
             </TabsList>
 
             <TabsContent value="add">
