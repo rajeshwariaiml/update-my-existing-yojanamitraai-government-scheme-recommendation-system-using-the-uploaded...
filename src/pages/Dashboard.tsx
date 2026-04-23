@@ -305,7 +305,11 @@ const Dashboard = () => {
                 <p className="text-xs text-muted-foreground">{t("discover_new_schemes")}</p>
               </div>
             </Link>
-            <div className="p-5 rounded-lg bg-card border border-border flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => { setActiveTab("saved"); navigate("/dashboard?tab=saved"); }}
+              className="text-left p-5 rounded-lg bg-card border border-border card-hover flex items-center gap-4 focus:outline-none focus:ring-2 focus:ring-primary/40"
+            >
               <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
                 <Bookmark className="h-5 w-5 text-accent" />
               </div>
@@ -313,8 +317,12 @@ const Dashboard = () => {
                 <h3 className="font-display font-semibold text-sm">{t("saved_schemes")}</h3>
                 <p className="text-xs text-muted-foreground">{t("saved_count", { count: savedSchemes.length })}</p>
               </div>
-            </div>
-            <div className="p-5 rounded-lg bg-card border border-border flex items-center gap-4">
+            </button>
+            <button
+              type="button"
+              onClick={() => { setActiveTab("notifications"); navigate("/dashboard?tab=notifications"); }}
+              className="text-left p-5 rounded-lg bg-card border border-border card-hover flex items-center gap-4 focus:outline-none focus:ring-2 focus:ring-primary/40"
+            >
               <div className="w-10 h-10 rounded-lg bg-civic-orange/10 flex items-center justify-center">
                 <Bell className="h-5 w-5 text-civic-orange" />
               </div>
@@ -322,10 +330,10 @@ const Dashboard = () => {
                 <h3 className="font-display font-semibold text-sm">{t("notifications")}</h3>
                 <p className="text-xs text-muted-foreground">{t("unread_count", { count: notifications.filter(n => !n.is_read).length })}</p>
               </div>
-            </div>
+            </button>
           </div>
 
-          <Tabs defaultValue="saved" className="animate-fade-up">
+          <Tabs value={activeTab} onValueChange={(v) => { setActiveTab(v); navigate(`/dashboard?tab=${v}`, { replace: true }); }} className="animate-fade-up">
             <TabsList className="mb-6">
               <TabsTrigger value="saved" className="gap-1.5"><Bookmark className="h-4 w-4" /> {t("saved")}</TabsTrigger>
               <TabsTrigger value="history" className="gap-1.5"><Clock className="h-4 w-4" /> {t("history")}</TabsTrigger>
