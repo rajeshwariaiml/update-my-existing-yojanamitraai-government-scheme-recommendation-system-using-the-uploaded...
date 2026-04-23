@@ -59,21 +59,39 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
   const status = statusConfig[scheme.eligibility_status];
   const StatusIcon = status.icon;
 
-  const displayTitle = isKn
-    ? (scheme.title_kn || scheme.scheme_name)
-    : (scheme.title_en || scheme.scheme_name);
-  const displayBenefits = isKn
-    ? translateFreeText(scheme.benefits_kn || scheme.benefits, "kn")
-    : (scheme.benefits_en || scheme.benefits);
-  const displayDescription = isKn
-    ? translateFreeText(scheme.description_kn || scheme.description, "kn")
-    : (scheme.description_en || scheme.description);
-  const displayExplanation = isKn
-    ? translateFreeText(scheme.explanation_kn || translateExplanation(scheme.explanation, "kn"), "kn")
-    : scheme.explanation;
-  const displayEligibility = isKn
-    ? translateFreeText(scheme.eligibility_kn || scheme.eligibility, "kn")
-    : (scheme.eligibility_en || scheme.eligibility);
+  // Build a single language-aware view of the scheme. In Kannada mode, prefer
+  // *_kn fields and run any English fallback through translateFreeText so no
+  // raw English leaks into the UI unless no Kannada data exists at all.
+  const pick = (kn?: string | null, en?: string | null, raw?: string | null) => {
+    if (isKn) {
+      const knVal = kn ?? undefined;
+      if (knVal && knVal.trim()) return translateFreeText(knVal, "kn");
+      const fallback = en ?? raw ?? "";
+      return translateFreeText(fallback, "kn");
+    }
+    return en ?? raw ?? "";
+  };
+
+  const localized = {
+    title: isKn
+      ? (scheme.title_kn || scheme.scheme_name)
+      : (scheme.title_en || scheme.scheme_name),
+    benefits: pick(scheme.benefits_kn, scheme.benefits_en, scheme.benefits),
+    description: pick(scheme.description_kn, scheme.description_en, scheme.description),
+    eligibility: pick(scheme.eligibility_kn, scheme.eligibility_en, scheme.eligibility),
+    explanation: isKn
+      ? translateFreeText(
+          scheme.explanation_kn || translateExplanation(scheme.explanation, "kn"),
+          "kn",
+        )
+      : scheme.explanation,
+  };
+
+  const displayTitle = localized.title;
+  const displayBenefits = localized.benefits;
+  const displayDescription = localized.description;
+  const displayExplanation = localized.explanation;
+  const displayEligibility = localized.eligibility;
   const displayCategory = translateCategory(scheme.category, language);
   const displayTarget = translateTargetGroup(scheme.target_group, language);
   const displayState = translateState(scheme.state, language);
