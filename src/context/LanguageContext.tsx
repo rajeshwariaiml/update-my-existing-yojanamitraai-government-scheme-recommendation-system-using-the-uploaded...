@@ -17,7 +17,22 @@ interface LanguageContextValue {
   t: (key: string, vars?: Record<string, string | number>) => string;
 }
 
-const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
+const defaultValue: LanguageContextValue = {
+  language: "en",
+  setLanguage: () => {},
+  toggleLanguage: () => {},
+  t: (key: string, vars?: Record<string, string | number>) => {
+    let str = (dictionaries.en as Dict)[key] ?? key;
+    if (vars) {
+      for (const [k, v] of Object.entries(vars)) {
+        str = str.replace(new RegExp(`\\{${k}\\}`, "g"), String(v));
+      }
+    }
+    return str;
+  },
+};
+
+const LanguageContext = createContext<LanguageContextValue>(defaultValue);
 
 const STORAGE_KEY = "language";
 
@@ -58,11 +73,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 };
 
-export const useLanguage = () => {
-  const ctx = useContext(LanguageContext);
-  if (!ctx) throw new Error("useLanguage must be used within LanguageProvider");
-  return ctx;
-};
+export const useLanguage = () => useContext(LanguageContext);
 
 // Convenience hook returning just the translator
 export const useTranslation = () => {
