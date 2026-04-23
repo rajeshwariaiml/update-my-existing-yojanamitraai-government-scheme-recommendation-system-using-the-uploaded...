@@ -124,8 +124,10 @@
   "missing_criteria": "Missing criteria:",
   "deadline": "Deadline:",
   "apply_now": "Apply Now",
-  "save": "Save",
-  "unsave": "Unsave",
+  "view_details": "View Details",
+  "reminder": "Reminder",
+  "save": "Save Scheme",
+  "unsave": "Unsave Scheme",
 
   "admin_panel": "Admin Panel",
   "admin_subtitle": "Manage government schemes and eligibility rules",
