@@ -108,7 +108,7 @@ const SchemeCard = ({ scheme, onSave, isSaved }: SchemeCardProps) => {
         {onSave && (
           <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => onSave(scheme)}>
             <Bookmark className={`h-3.5 w-3.5 ${isSaved ? "fill-primary text-primary" : ""}`} />
-            {isSaved ? t("saved") : t("save")}
+            {isSaved ? t("unsave") : t("save")}
           </Button>
         )}
       </div>
