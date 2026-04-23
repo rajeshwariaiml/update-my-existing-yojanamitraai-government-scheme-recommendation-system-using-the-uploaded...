@@ -76,10 +76,27 @@ export const translateState = (value: string | null | undefined, lang: Lang) =>
   lang === "kn" ? lookup(STATE_KN, value) : (value ?? "");
 
 // Translate a free-text fallback explanation produced by the local matcher
-// or the recommend-schemes edge function.
+// Mapping of attribute names emitted by ml_pipeline/explainability_engine.py
+const ATTRIBUTE_KN: Record<string, string> = {
+  "age range": "ವಯಸ್ಸಿನ ವ್ಯಾಪ್ತಿ",
+  "income level": "ಆದಾಯದ ಮಟ್ಟ",
+  "geographic location": "ಭೌಗೋಳಿಕ ಸ್ಥಳ",
+  "gender criteria": "ಲಿಂಗ ಮಾನದಂಡ",
+  "education qualification": "ಶೈಕ್ಷಣಿಕ ಅರ್ಹತೆ",
+  "occupation type": "ಉದ್ಯೋಗ ಪ್ರಕಾರ",
+  "social category": "ಸಾಮಾಜಿಕ ವರ್ಗ",
+};
+
+const translateAttrList = (csv: string) =>
+  csv.split(/,\s*|\s+and\s+/).map((a) => ATTRIBUTE_KN[a.trim().toLowerCase()] ?? a.trim()).join(", ");
+
+// or the recommend-schemes edge function / ml_pipeline explainability engine.
 export const translateExplanation = (text: string | undefined, lang: Lang) => {
   if (!text || lang !== "kn") return text ?? "";
-  return text
+  let out = text;
+
+  // Edge-function fallback sentences
+  out = out
     .replace(/Matched based on strong alignment with your age, income, and location profile\./i,
       "ನಿಮ್ಮ ವಯಸ್ಸು, ಆದಾಯ ಮತ್ತು ಸ್ಥಳಕ್ಕೆ ಬಲವಾದ ಹೊಂದಾಣಿಕೆಯ ಆಧಾರದಲ್ಲಿ ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ.")
     .replace(/Matched based on partial alignment with your age, income, and location profile\./i,
@@ -88,6 +105,31 @@ export const translateExplanation = (text: string | undefined, lang: Lang) => {
       "ನಿಮ್ಮ ಜನಸಂಖ್ಯಾ ಪ್ರೊಫೈಲ್‌ಗೆ ಬಲವಾದ ಹೊಂದಾಣಿಕೆಯ ಆಧಾರದಲ್ಲಿ ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ.")
     .replace(/Matched based on partial alignment with your demographic profile\./i,
       "ನಿಮ್ಮ ಜನಸಂಖ್ಯಾ ಪ್ರೊಫೈಲ್‌ಗೆ ಭಾಗಶಃ ಹೊಂದಾಣಿಕೆಯ ಆಧಾರದಲ್ಲಿ ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ.");
+
+  // ML pipeline (ExplainabilityEngine) template fragments
+  out = out
+    .replace(/This scheme is highly recommended for you\./i,
+      "ಈ ಯೋಜನೆಯನ್ನು ನಿಮಗೆ ಬಲವಾಗಿ ಶಿಫಾರಸು ಮಾಡಲಾಗಿದೆ.")
+    .replace(/This scheme is a partial match for your profile\./i,
+      "ಈ ಯೋಜನೆ ನಿಮ್ಮ ಪ್ರೊಫೈಲ್‌ಗೆ ಭಾಗಶಃ ಹೊಂದಿಕೆಯಾಗಿದೆ.")
+    .replace(/This scheme has limited alignment with your current profile\./i,
+      "ಈ ಯೋಜನೆ ನಿಮ್ಮ ಪ್ರಸ್ತುತ ಪ್ರೊಫೈಲ್‌ಗೆ ಸೀಮಿತ ಹೊಂದಾಣಿಕೆ ಹೊಂದಿದೆ.")
+    .replace(/Your profile strongly aligns with the eligibility criteria\./i,
+      "ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಅರ್ಹತೆ ಮಾನದಂಡಗಳಿಗೆ ಬಲವಾಗಿ ಹೊಂದಿಕೆಯಾಗುತ್ತದೆ.")
+    .replace(/Consider updating your profile or checking if exceptions apply\./i,
+      "ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ನವೀಕರಿಸಿ ಅಥವಾ ವಿನಾಯಿತಿಗಳಿವೆಯೇ ಎಂಬುದನ್ನು ಪರಿಶೀಲಿಸಿ.")
+    .replace(/You may become eligible if your circumstances change\./i,
+      "ನಿಮ್ಮ ಪರಿಸ್ಥಿತಿ ಬದಲಾದರೆ ನೀವು ಅರ್ಹರಾಗಬಹುದು.")
+    .replace(/Limited profile information was available for matching\./i,
+      "ಹೊಂದಾಣಿಕೆಗೆ ಸೀಮಿತ ಪ್ರೊಫೈಲ್ ಮಾಹಿತಿ ಲಭ್ಯವಿತ್ತು.")
+    .replace(/However,\s*/i, "ಆದರೆ, ")
+    .replace(/Missing criteria:\s*/i, "ಕೊರತೆಯಿರುವ ಮಾನದಂಡ: ");
+
+  // "It matches your X." / "It matches your A, B and C."
+  out = out.replace(/It matches your ([^.]+)\./gi, (_, attrs) =>
+    `ಇದು ನಿಮ್ಮ ${translateAttrList(attrs)} ಗೆ ಹೊಂದಿಕೆಯಾಗುತ್ತದೆ.`);
+
+  return out;
 };
 
 // Translate a single "missing criterion" sentence emitted by the local matcher.
