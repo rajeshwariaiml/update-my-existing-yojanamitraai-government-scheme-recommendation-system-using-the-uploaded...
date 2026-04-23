@@ -16,13 +16,18 @@ export interface SchemeResult {
   eligibility_status: "eligible" | "partial" | "not_eligible";
   missing_criteria?: string[];
   explanation?: string;
-  // Optional multilingual fields (when sourced from schemes_multilingual.json)
+  // Optional multilingual fields (when sourced from schemes_multilingual.json / backend KN payload)
   title_en?: string;
   title_kn?: string;
+  description?: string;
   description_en?: string;
   description_kn?: string;
   benefits_en?: string;
   benefits_kn?: string;
+  eligibility?: string;
+  eligibility_en?: string;
+  eligibility_kn?: string;
+  explanation_kn?: string;
 }
 
 interface SchemeCardProps {
@@ -50,6 +55,12 @@ const SchemeCard = ({ scheme, onSave, isSaved }: SchemeCardProps) => {
   const displayBenefits = isKn
     ? (scheme.benefits_kn || scheme.benefits)
     : (scheme.benefits_en || scheme.benefits);
+  const displayDescription = isKn
+    ? (scheme.description_kn || scheme.description)
+    : (scheme.description_en || scheme.description);
+  const displayExplanation = isKn
+    ? (scheme.explanation_kn || scheme.explanation)
+    : scheme.explanation;
 
   return (
     <div className="bg-card border border-border rounded-lg p-5 card-hover space-y-3">
@@ -75,9 +86,13 @@ const SchemeCard = ({ scheme, onSave, isSaved }: SchemeCardProps) => {
 
       <p className="text-sm text-muted-foreground leading-relaxed">{displayBenefits}</p>
 
-      {scheme.explanation && (
+      {displayDescription && displayDescription !== displayBenefits && (
+        <p className="text-xs text-muted-foreground/80 leading-relaxed">{displayDescription}</p>
+      )}
+
+      {displayExplanation && (
         <div className="bg-civic-blue-light rounded-md p-3 text-xs text-foreground">
-          <span className="font-semibold">{t("why_recommended")}</span> {scheme.explanation}
+          <span className="font-semibold">{t("why_recommended")}</span> {displayExplanation}
         </div>
       )}
 
