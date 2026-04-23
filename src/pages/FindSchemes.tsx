@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -28,15 +28,15 @@ const FindSchemes = () => {
   const t = useTranslation();
 
   // Hydrate saved scheme IDs from localStorage so toggle state survives refresh
-  useState(() => {
+  useEffect(() => {
     try {
       const raw = localStorage.getItem("savedSchemes");
       if (raw) {
         const list: SchemeResult[] = JSON.parse(raw);
-        return setSavedIds(new Set(list.map((s) => s.id)));
+        setSavedIds(new Set(list.map((s) => s.id)));
       }
     } catch { /* ignore */ }
-  });
+  }, []);
 
   const pushHistory = (items: SchemeResult[]) => {
     try {
@@ -70,7 +70,9 @@ const FindSchemes = () => {
         body: { query: nlpQuery, mode: "nlp" },
       });
       if (error) throw error;
-      setResults(data?.recommendations ?? []);
+      const recs = data?.recommendations ?? [];
+      setResults(recs);
+      pushHistory(recs);
     } catch {
       toast({ title: "Error fetching recommendations", variant: "destructive" });
       await handleLocalFallback(nlpQuery);
@@ -86,7 +88,9 @@ const FindSchemes = () => {
         body: { profile: formData, mode: "form" },
       });
       if (error) throw error;
-      setResults(data?.recommendations ?? []);
+      const recs = data?.recommendations ?? [];
+      setResults(recs);
+      pushHistory(recs);
     } catch {
       await handleLocalFallback();
     }
