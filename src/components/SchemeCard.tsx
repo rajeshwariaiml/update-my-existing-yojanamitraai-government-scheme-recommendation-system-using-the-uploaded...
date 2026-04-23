@@ -8,6 +8,7 @@ import {
   translateState,
   translateExplanation,
   translateMissingCriterion,
+  translateFreeText,
 } from "@/lib/translateScheme";
 import { enrichWithMultilingual } from "@/lib/multilingualSchemes";
 
@@ -62,16 +63,16 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
     ? (scheme.title_kn || scheme.scheme_name)
     : (scheme.title_en || scheme.scheme_name);
   const displayBenefits = isKn
-    ? (scheme.benefits_kn || scheme.benefits)
+    ? translateFreeText(scheme.benefits_kn || scheme.benefits, "kn")
     : (scheme.benefits_en || scheme.benefits);
   const displayDescription = isKn
-    ? (scheme.description_kn || scheme.description)
+    ? translateFreeText(scheme.description_kn || scheme.description, "kn")
     : (scheme.description_en || scheme.description);
   const displayExplanation = isKn
-    ? (scheme.explanation_kn || translateExplanation(scheme.explanation, "kn"))
+    ? translateFreeText(scheme.explanation_kn || translateExplanation(scheme.explanation, "kn"), "kn")
     : scheme.explanation;
   const displayEligibility = isKn
-    ? (scheme.eligibility_kn || scheme.eligibility)
+    ? translateFreeText(scheme.eligibility_kn || scheme.eligibility, "kn")
     : (scheme.eligibility_en || scheme.eligibility);
   const displayCategory = translateCategory(scheme.category, language);
   const displayTarget = translateTargetGroup(scheme.target_group, language);
