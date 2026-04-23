@@ -155,6 +155,7 @@ export const translateExplanation = (text: string | undefined, lang: Lang) => {
 // Word-level dictionary used for benefits / eligibility / criteria fallbacks
 // when no *_kn variant is present in the dataset.
 const PHRASE_KN: Array<[RegExp, string]> = [
+  // ---- Order matters: longer / multi-word phrases first ----
   [/Must belong to BPL category/gi, "BPL ವರ್ಗಕ್ಕೆ ಸೇರಿರಬೇಕು"],
   [/Must belong to APL category/gi, "APL ವರ್ಗಕ್ಕೆ ಸೇರಿರಬೇಕು"],
   [/Below Poverty Line/gi, "ಬಡತನ ರೇಖೆಗಿಂತ ಕೆಳಗೆ"],
@@ -169,20 +170,69 @@ const PHRASE_KN: Array<[RegExp, string]> = [
   [/Must be unemployed/gi, "ನಿರುದ್ಯೋಗಿಯಾಗಿರಬೇಕು"],
   [/Must be married/gi, "ವಿವಾಹಿತರಾಗಿರಬೇಕು"],
   [/Must be unmarried/gi, "ಅವಿವಾಹಿತರಾಗಿರಬೇಕು"],
+
+  // ---- Loan / credit / business benefit phrases (covers Mudra etc.) ----
+  [/Collateral[- ]free loan(s)?/gi, "ಖಾತರಿ ರಹಿತ ಸಾಲ"],
+  [/Collateral[- ]free/gi, "ಖಾತರಿ ರಹಿತ"],
+  [/loans? up to/gi, "ಗರಿಷ್ಠ ಸಾಲ"],
+  [/Credit (facility|support|guarantee)/gi, "ಸಾಲ ಸೌಲಭ್ಯ"],
+  [/Working capital/gi, "ಚಲಾವಣಾ ಬಂಡವಾಳ"],
+  [/Term loan/gi, "ಅವಧಿ ಸಾಲ"],
+  [/Micro,?\s*small (and|&) medium enterprises?/gi, "ಸೂಕ್ಷ್ಮ, ಸಣ್ಣ ಮತ್ತು ಮಧ್ಯಮ ಉದ್ಯಮಗಳು"],
+  [/MSMEs?/g, "MSME"],
+  [/Small business(es)?/gi, "ಸಣ್ಣ ವ್ಯಾಪಾರ"],
+  [/Micro enterprises?/gi, "ಸೂಕ್ಷ್ಮ ಉದ್ಯಮ"],
+  [/Self[- ]employment/gi, "ಸ್ವಯಂ ಉದ್ಯೋಗ"],
+  [/Self[- ]employed/gi, "ಸ್ವಯಂ ಉದ್ಯೋಗಿ"],
+  [/Non[- ]corporate/gi, "ಕಾರ್ಪೊರೇಟ್ ಅಲ್ಲದ"],
+  [/Non[- ]farm/gi, "ಕೃಷಿಯೇತರ"],
+  [/Income generating activit(y|ies)/gi, "ಆದಾಯ ಗಳಿಕೆಯ ಚಟುವಟಿಕೆ"],
+  [/Manufacturing/gi, "ಉತ್ಪಾದನೆ"],
+  [/Trading/gi, "ವ್ಯಾಪಾರ"],
+  [/Services? sector/gi, "ಸೇವಾ ವಲಯ"],
+  [/Entrepreneurs?/gi, "ಉದ್ಯಮಿಗಳು"],
+  [/Women entrepreneurs?/gi, "ಮಹಿಳಾ ಉದ್ಯಮಿಗಳು"],
+
+  // ---- Generic benefit / scheme nouns ----
   [/Financial assistance/gi, "ಆರ್ಥಿಕ ಸಹಾಯ"],
   [/Health insurance/gi, "ಆರೋಗ್ಯ ವಿಮೆ"],
+  [/Insurance cover(age)?/gi, "ವಿಮಾ ರಕ್ಷಣೆ"],
+  [/Pension/gi, "ಪಿಂಚಣಿ"],
   [/Scholarship/gi, "ವಿದ್ಯಾರ್ಥಿವೇತನ"],
   [/Subsidy/gi, "ಸಬ್ಸಿಡಿ"],
+  [/Subsidies/gi, "ಸಬ್ಸಿಡಿಗಳು"],
+  [/Welfare benefits?/gi, "ಕಲ್ಯಾಣ ಸೌಲಭ್ಯ"],
+  [/Cash transfer/gi, "ನಗದು ವರ್ಗಾವಣೆ"],
+  [/Direct benefit transfer/gi, "ನೇರ ಸೌಲಭ್ಯ ವರ್ಗಾವಣೆ"],
+  [/Subsidi(z|s)ed interest/gi, "ಸಬ್ಸಿಡಿ ಬಡ್ಡಿ"],
+  [/Interest subsidy/gi, "ಬಡ್ಡಿ ಸಬ್ಸಿಡಿ"],
+  [/Skill (training|development)/gi, "ಕೌಶಲ್ಯ ತರಬೇತಿ"],
+  [/Training programme?/gi, "ತರಬೇತಿ ಕಾರ್ಯಕ್ರಮ"],
   [/Loan/gi, "ಸಾಲ"],
+
+  // ---- Common time / amount tokens ----
   [/per year/gi, "ಪ್ರತಿ ವರ್ಷ"],
   [/per month/gi, "ಪ್ರತಿ ತಿಂಗಳು"],
   [/per family/gi, "ಪ್ರತಿ ಕುಟುಂಬ"],
-  [/lakh/gi, "ಲಕ್ಷ"],
+  [/per annum/gi, "ಪ್ರತಿ ವರ್ಷ"],
+  [/per beneficiary/gi, "ಪ್ರತಿ ಫಲಾನುಭವಿ"],
+  [/up to ₹/gi, "ಗರಿಷ್ಠ ₹"],
+  [/up to/gi, "ಗರಿಷ್ಠ"],
+  [/lakhs?/gi, "ಲಕ್ಷ"],
+  [/crores?/gi, "ಕೋಟಿ"],
   [/years/gi, "ವರ್ಷಗಳು"],
   [/year/gi, "ವರ್ಷ"],
+  [/months?/gi, "ತಿಂಗಳು"],
   [/and above/gi, "ಮತ್ತು ಮೇಲೆ"],
   [/and below/gi, "ಮತ್ತು ಕೆಳಗೆ"],
+
+  // ---- Labels emitted by local rule-based matcher ----
   [/Eligible:/gi, "ಅರ್ಹತೆ:"],
+  [/Not eligible:/gi, "ಅರ್ಹರಲ್ಲ:"],
+
+  // ---- Common short words (kept last; small risk of partial overlap) ----
+  [/\bIndia\b/g, "ಭಾರತ"],
+  [/\ball india\b/gi, "ಅಖಿಲ ಭಾರತ"],
 ];
 
 const phraseTranslate = (text: string) => {
