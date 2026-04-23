@@ -116,8 +116,10 @@
   "no_notifications": "No notifications yet.",
   "upcoming_deadline": "Upcoming Deadline",
 
-  "scheme_match": "Match",
+  "scheme_match": "Match %",
+  "eligibility_label": "Eligibility:",
   "eligible": "Eligible",
+  "ongoing": "Ongoing",
   "partially_eligible": "Partially Eligible",
   "not_eligible": "Not Eligible",
   "why_recommended": "Why recommended:",
