@@ -2,29 +2,30 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Bookmark, ExternalLink, CheckCircle2, AlertTriangle, Clock } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import {
-  translateCategory,
-  translateTargetGroup,
-  translateState,
-  translateExplanation,
-  translateMissingCriterion,
-  translateFreeText,
-} from "@/lib/translateScheme";
-import { enrichWithMultilingual } from "@/lib/multilingualSchemes";
+import { translateMissingCriterion } from "@/lib/translateScheme";
+import { localizeSchemeObject } from "@/lib/localizeSchemeObject";
 
 export interface SchemeResult {
   id: string;
   scheme_name: string;
+  title?: string;
   category: string;
+  category_en?: string;
+  category_kn?: string;
   target_group: string;
+  target_group_en?: string;
+  target_group_kn?: string;
   benefits: string;
   deadline?: string | null;
   official_link?: string | null;
   state?: string | null;
+  state_en?: string | null;
+  state_kn?: string | null;
   match_percentage: number;
   eligibility_status: "eligible" | "partial" | "not_eligible";
   missing_criteria?: string[];
   explanation?: string;
+  explanation_en?: string;
   // Optional multilingual fields (when sourced from schemes_multilingual.json / backend KN payload)
   title_en?: string;
   title_kn?: string;
@@ -36,6 +37,9 @@ export interface SchemeResult {
   eligibility?: string;
   eligibility_en?: string;
   eligibility_kn?: string;
+  criteria?: string[] | string;
+  criteria_en?: string[] | string;
+  criteria_kn?: string[] | string;
   explanation_kn?: string;
 }
 
@@ -47,8 +51,7 @@ interface SchemeCardProps {
 
 const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => {
   const { language, t } = useLanguage();
-  const isKn = language === "kn";
-  const scheme = enrichWithMultilingual(rawScheme);
+  const scheme = localizeSchemeObject(rawScheme, language);
 
   const statusConfig = {
     eligible: { label: t("eligible"), icon: CheckCircle2, className: "bg-civic-green-light text-civic-green" },
@@ -59,42 +62,14 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
   const status = statusConfig[scheme.eligibility_status];
   const StatusIcon = status.icon;
 
-  // Build a single language-aware view of the scheme. In Kannada mode, prefer
-  // *_kn fields and run any English fallback through translateFreeText so no
-  // raw English leaks into the UI unless no Kannada data exists at all.
-  const pick = (kn?: string | null, en?: string | null, raw?: string | null) => {
-    if (isKn) {
-      const knVal = kn ?? undefined;
-      if (knVal && knVal.trim()) return translateFreeText(knVal, "kn");
-      const fallback = en ?? raw ?? "";
-      return translateFreeText(fallback, "kn");
-    }
-    return en ?? raw ?? "";
-  };
-
-  const localized = {
-    title: isKn
-      ? (scheme.title_kn || scheme.scheme_name)
-      : (scheme.title_en || scheme.scheme_name),
-    benefits: pick(scheme.benefits_kn, scheme.benefits_en, scheme.benefits),
-    description: pick(scheme.description_kn, scheme.description_en, scheme.description),
-    eligibility: pick(scheme.eligibility_kn, scheme.eligibility_en, scheme.eligibility),
-    explanation: isKn
-      ? translateFreeText(
-          scheme.explanation_kn || translateExplanation(scheme.explanation, "kn"),
-          "kn",
-        )
-      : scheme.explanation,
-  };
-
-  const displayTitle = localized.title;
-  const displayBenefits = localized.benefits;
-  const displayDescription = localized.description;
-  const displayExplanation = localized.explanation;
-  const displayEligibility = localized.eligibility;
-  const displayCategory = translateCategory(scheme.category, language);
-  const displayTarget = translateTargetGroup(scheme.target_group, language);
-  const displayState = translateState(scheme.state, language);
+  const displayTitle = scheme.title;
+  const displayBenefits = scheme.benefits;
+  const displayDescription = scheme.description;
+  const displayExplanation = scheme.explanation;
+  const displayEligibility = scheme.eligibility;
+  const displayCategory = scheme.category;
+  const displayTarget = scheme.target_group;
+  const displayState = scheme.state;
 
   return (
     <div className="bg-card border border-border rounded-lg p-5 card-hover space-y-3">
@@ -147,7 +122,7 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
 
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <Clock className="h-3.5 w-3.5" />
-        {t("deadline")} <span className="font-medium text-foreground">{scheme.deadline || t("ongoing")}</span>
+        {t("deadline")} <span className="font-medium text-foreground">{scheme.deadline || scheme.deadline_label || t("ongoing")}</span>
       </div>
 
       <div className="flex items-center gap-2 pt-1">
@@ -159,7 +134,7 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
           </a>
         )}
         {onSave && (
-          <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => onSave(scheme)}>
+          <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => onSave(rawScheme)}>
             <Bookmark className={`h-3.5 w-3.5 ${isSaved ? "fill-primary text-primary" : ""}`} />
             {isSaved ? t("unsave") : t("save")}
           </Button>
