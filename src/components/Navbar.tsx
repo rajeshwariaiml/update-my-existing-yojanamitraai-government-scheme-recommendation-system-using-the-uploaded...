@@ -15,7 +15,7 @@ const Navbar = () => {
   const { toast } = useToast();
   const { language, t } = useLanguage();
   const isKn = language === "kn";
-  const brandTitle = isKn ? "ಯೋಜನಾಮಿತ್ರ AI" : "YojanaMitraAI";
+  const brandTitle = isKn ? "ಯೋಜನಾಮಿತ್ರ AI" : "YojanaMitra AI";
   const brandTagline = isKn
     ? "ಸರ್ಕಾರಿ ಯೋಜನೆಗಳಿಗೆ ನಿಮ್ಮ ಮಾರ್ಗದರ್ಶಿ"
     : "Your Guide to Government Schemes";

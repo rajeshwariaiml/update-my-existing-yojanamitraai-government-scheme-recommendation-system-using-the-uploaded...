@@ -174,13 +174,13 @@ const PHRASE_KN: Array<[RegExp, string]> = [
   // ---- Loan / credit / business benefit phrases (covers Mudra etc.) ----
   [/Collateral[- ]free loan(s)?/gi, "ಖಾತರಿ ರಹಿತ ಸಾಲ"],
   [/Collateral[- ]free/gi, "ಖಾತರಿ ರಹಿತ"],
-  [/loans? up to/gi, "ಗರಿಷ್ಠ ಸಾಲ"],
   [/Credit (facility|support|guarantee)/gi, "ಸಾಲ ಸೌಲಭ್ಯ"],
   [/Working capital/gi, "ಚಲಾವಣಾ ಬಂಡವಾಳ"],
   [/Term loan/gi, "ಅವಧಿ ಸಾಲ"],
   [/Micro,?\s*small (and|&) medium enterprises?/gi, "ಸೂಕ್ಷ್ಮ, ಸಣ್ಣ ಮತ್ತು ಮಧ್ಯಮ ಉದ್ಯಮಗಳು"],
-  [/MSMEs?/g, "MSME"],
+  [/\bMSMEs?\b/g, "ಸೂಕ್ಷ್ಮ, ಸಣ್ಣ ಮತ್ತು ಮಧ್ಯಮ ಉದ್ಯಮ"],
   [/Small business(es)?/gi, "ಸಣ್ಣ ವ್ಯಾಪಾರ"],
+  [/Business(es)?/gi, "ವ್ಯಾಪಾರ"],
   [/Micro enterprises?/gi, "ಸೂಕ್ಷ್ಮ ಉದ್ಯಮ"],
   [/Self[- ]employment/gi, "ಸ್ವಯಂ ಉದ್ಯೋಗ"],
   [/Self[- ]employed/gi, "ಸ್ವಯಂ ಉದ್ಯೋಗಿ"],
@@ -190,8 +190,22 @@ const PHRASE_KN: Array<[RegExp, string]> = [
   [/Manufacturing/gi, "ಉತ್ಪಾದನೆ"],
   [/Trading/gi, "ವ್ಯಾಪಾರ"],
   [/Services? sector/gi, "ಸೇವಾ ವಲಯ"],
-  [/Entrepreneurs?/gi, "ಉದ್ಯಮಿಗಳು"],
   [/Women entrepreneurs?/gi, "ಮಹಿಳಾ ಉದ್ಯಮಿಗಳು"],
+  [/Entrepreneurs?/gi, "ಉದ್ಯಮಿಗಳು"],
+  [/Interest subsidy/gi, "ಬಡ್ಡಿ ಸಬ್ಸಿಡಿ"],
+  [/Subsidi(z|s)ed interest/gi, "ಸಬ್ಸಿಡಿ ಬಡ್ಡಿ"],
+  [/\binterest\b/gi, "ಬಡ್ಡಿ"],
+  [/\bcollateral\b/gi, "ಖಾತರಿ"],
+  [/\bcredit\b/gi, "ಸಾಲ"],
+  [/loans? up to/gi, "ಗರಿಷ್ಠ ಸಾಲ"],
+
+  // ---- Title words and scheme naming ----
+  [/\bMudra\b/gi, "ಮುದ್ರಾ"],
+  [/\bShishu\b/gi, "ಶಿಶು"],
+  [/\bKishore\b/gi, "ಕಿಶೋರ್"],
+  [/\bTarun\b/gi, "ತರುಣ"],
+  [/\bYojana\b/gi, "ಯೋಜನೆ"],
+  [/\bScheme\b/gi, "ಯೋಜನೆ"],
 
   // ---- Generic benefit / scheme nouns ----
   [/Financial assistance/gi, "ಆರ್ಥಿಕ ಸಹಾಯ"],
@@ -199,13 +213,11 @@ const PHRASE_KN: Array<[RegExp, string]> = [
   [/Insurance cover(age)?/gi, "ವಿಮಾ ರಕ್ಷಣೆ"],
   [/Pension/gi, "ಪಿಂಚಣಿ"],
   [/Scholarship/gi, "ವಿದ್ಯಾರ್ಥಿವೇತನ"],
-  [/Subsidy/gi, "ಸಬ್ಸಿಡಿ"],
   [/Subsidies/gi, "ಸಬ್ಸಿಡಿಗಳು"],
+  [/Subsidy/gi, "ಸಬ್ಸಿಡಿ"],
   [/Welfare benefits?/gi, "ಕಲ್ಯಾಣ ಸೌಲಭ್ಯ"],
   [/Cash transfer/gi, "ನಗದು ವರ್ಗಾವಣೆ"],
   [/Direct benefit transfer/gi, "ನೇರ ಸೌಲಭ್ಯ ವರ್ಗಾವಣೆ"],
-  [/Subsidi(z|s)ed interest/gi, "ಸಬ್ಸಿಡಿ ಬಡ್ಡಿ"],
-  [/Interest subsidy/gi, "ಬಡ್ಡಿ ಸಬ್ಸಿಡಿ"],
   [/Skill (training|development)/gi, "ಕೌಶಲ್ಯ ತರಬೇತಿ"],
   [/Training programme?/gi, "ತರಬೇತಿ ಕಾರ್ಯಕ್ರಮ"],
   [/Loan/gi, "ಸಾಲ"],
@@ -231,8 +243,8 @@ const PHRASE_KN: Array<[RegExp, string]> = [
   [/Not eligible:/gi, "ಅರ್ಹರಲ್ಲ:"],
 
   // ---- Common short words (kept last; small risk of partial overlap) ----
-  [/\bIndia\b/g, "ಭಾರತ"],
   [/\ball india\b/gi, "ಅಖಿಲ ಭಾರತ"],
+  [/\bIndia\b/g, "ಭಾರತ"],
 ];
 
 const phraseTranslate = (text: string) => {
