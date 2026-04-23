@@ -2,7 +2,7 @@
 // The dataset is shipped with the frontend so we can enrich any
 // recommendation/saved/history record with KN fields client-side without
 // requiring backend changes.
-import dataset from "@/../dataset/schemes_multilingual.json";
+import dataset from "../../dataset/schemes_multilingual.json";
 
 interface MultilingualScheme {
   scheme_name: string;
