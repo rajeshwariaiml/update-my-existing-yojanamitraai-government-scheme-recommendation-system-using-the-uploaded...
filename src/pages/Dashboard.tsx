@@ -26,84 +26,188 @@ const Dashboard = () => {
   const { toast } = useToast();
   const t = useTranslation();
 
+  // Local storage helpers (fallback for unauthenticated demo flow)
+  const loadLocalProfile = () => {
+    try {
+      const raw = localStorage.getItem("userProfile");
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch { return null; }
+  };
+
+  const loadLocalSaved = (): SchemeResult[] => {
+    try {
+      const raw = localStorage.getItem("savedSchemes");
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  };
+
+  const loadLocalHistory = (): SchemeResult[] => {
+    try {
+      const raw = localStorage.getItem("schemeHistory");
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  };
+
+  const loadLocalNotifications = (): any[] => {
+    try {
+      const raw = localStorage.getItem("notifications");
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  };
+
+  const hydrateFromLocal = () => {
+    const localProfile = loadLocalProfile();
+    if (localProfile) {
+      setProfile(localProfile);
+      setProfileForm({
+        full_name: localProfile.full_name || "",
+        age: localProfile.age?.toString() || "",
+        gender: localProfile.gender || "",
+        income: localProfile.income?.toString() || "",
+        occupation: localProfile.occupation || "",
+        education_level: localProfile.education_level || "",
+        state: localProfile.state || "",
+        district: localProfile.district || "",
+        category: localProfile.category || "",
+      });
+    }
+    setSavedSchemes(loadLocalSaved());
+    setRecentRecs(loadLocalHistory());
+    setNotifications(loadLocalNotifications());
+  };
+
   useEffect(() => {
+    let mounted = true;
+    const init = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!mounted) return;
+      if (session?.user) {
+        setUser(session.user);
+        await loadData(session.user.id);
+      } else {
+        // Demo / unauthenticated mode — use localStorage so UI still works
+        hydrateFromLocal();
+        setLoading(false);
+      }
+    };
+    init();
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session?.user) { navigate("/login"); return; }
-      setUser(session.user);
-      loadData(session.user.id);
+      if (session?.user) {
+        setUser(session.user);
+        loadData(session.user.id);
+      } else {
+        setUser(null);
+        hydrateFromLocal();
+        setLoading(false);
+      }
     });
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session?.user) { navigate("/login"); return; }
-      setUser(session.user);
-      loadData(session.user.id);
-    });
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+
+    // Refresh when other tabs / pages change localStorage
+    const onStorage = () => hydrateFromLocal();
+    window.addEventListener("storage", onStorage);
+    // Refresh on focus so saves from FindSchemes show up immediately
+    const onFocus = () => { if (!user) hydrateFromLocal(); };
+    window.addEventListener("focus", onFocus);
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("focus", onFocus);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const loadData = async (userId: string) => {
     setLoading(true);
-    const [profileRes, savedRes, recsRes, notifRes] = await Promise.all([
-      supabase.from("user_profiles").select("*").eq("user_id", userId).maybeSingle(),
-      supabase.from("saved_schemes").select("*, schemes(*)").eq("user_id", userId).order("created_at", { ascending: false }),
-      supabase.from("recommendations").select("*, schemes(*)").eq("user_id", userId).order("created_at", { ascending: false }).limit(6),
-      supabase.from("notifications").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(10),
-    ]);
+    try {
+      const [profileRes, savedRes, recsRes, notifRes] = await Promise.all([
+        supabase.from("user_profiles").select("*").eq("user_id", userId).maybeSingle(),
+        supabase.from("saved_schemes").select("*, schemes(*)").eq("user_id", userId).order("created_at", { ascending: false }),
+        supabase.from("recommendations").select("*, schemes(*)").eq("user_id", userId).order("created_at", { ascending: false }).limit(6),
+        supabase.from("notifications").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(10),
+      ]);
 
-    if (profileRes.data) {
-      setProfile(profileRes.data);
-      setProfileForm({
-        full_name: profileRes.data.full_name || "",
-        age: profileRes.data.age?.toString() || "",
-        gender: profileRes.data.gender || "",
-        income: profileRes.data.income?.toString() || "",
-        occupation: profileRes.data.occupation || "",
-        education_level: profileRes.data.education_level || "",
-        state: profileRes.data.state || "",
-        district: profileRes.data.district || "",
-        category: profileRes.data.category || "",
-      });
+      if (profileRes.data) {
+        setProfile(profileRes.data);
+        setProfileForm({
+          full_name: profileRes.data.full_name || "",
+          age: profileRes.data.age?.toString() || "",
+          gender: profileRes.data.gender || "",
+          income: profileRes.data.income?.toString() || "",
+          occupation: profileRes.data.occupation || "",
+          education_level: profileRes.data.education_level || "",
+          state: profileRes.data.state || "",
+          district: profileRes.data.district || "",
+          category: profileRes.data.category || "",
+        });
+      } else {
+        // Fall back to local profile if backend has none
+        const localProfile = loadLocalProfile();
+        if (localProfile) {
+          setProfileForm({
+            full_name: localProfile.full_name || "",
+            age: localProfile.age?.toString() || "",
+            gender: localProfile.gender || "",
+            income: localProfile.income?.toString() || "",
+            occupation: localProfile.occupation || "",
+            education_level: localProfile.education_level || "",
+            state: localProfile.state || "",
+            district: localProfile.district || "",
+            category: localProfile.category || "",
+          });
+        }
+      }
+
+      if (savedRes.data && savedRes.data.length > 0) {
+        setSavedSchemes(savedRes.data.map((s: any) => ({
+          id: s.schemes.id,
+          scheme_name: s.schemes.scheme_name,
+          category: s.schemes.category,
+          target_group: s.schemes.target_group,
+          benefits: s.schemes.benefits,
+          deadline: s.schemes.deadline,
+          official_link: s.schemes.official_link,
+          state: s.schemes.state,
+          match_percentage: 0,
+          eligibility_status: "partial" as const,
+        })));
+      } else {
+        setSavedSchemes(loadLocalSaved());
+      }
+
+      if (recsRes.data && recsRes.data.length > 0) {
+        setRecentRecs(recsRes.data.map((r: any) => ({
+          id: r.schemes.id,
+          scheme_name: r.schemes.scheme_name,
+          category: r.schemes.category,
+          target_group: r.schemes.target_group,
+          benefits: r.schemes.benefits,
+          deadline: r.schemes.deadline,
+          official_link: r.schemes.official_link,
+          state: r.schemes.state,
+          match_percentage: r.match_percentage,
+          eligibility_status: r.eligibility_status as SchemeResult["eligibility_status"],
+          missing_criteria: r.missing_criteria,
+          explanation: r.explanation,
+        })));
+      } else {
+        setRecentRecs(loadLocalHistory());
+      }
+
+      const localNotifs = loadLocalNotifications();
+      setNotifications([...(notifRes.data ?? []), ...localNotifs]);
+    } catch (e) {
+      console.error("loadData error", e);
+      hydrateFromLocal();
     }
-
-    if (savedRes.data) {
-      setSavedSchemes(savedRes.data.map((s: any) => ({
-        id: s.schemes.id,
-        scheme_name: s.schemes.scheme_name,
-        category: s.schemes.category,
-        target_group: s.schemes.target_group,
-        benefits: s.schemes.benefits,
-        deadline: s.schemes.deadline,
-        official_link: s.schemes.official_link,
-        state: s.schemes.state,
-        match_percentage: 0,
-        eligibility_status: "partial" as const,
-      })));
-    }
-
-    if (recsRes.data) {
-      setRecentRecs(recsRes.data.map((r: any) => ({
-        id: r.schemes.id,
-        scheme_name: r.schemes.scheme_name,
-        category: r.schemes.category,
-        target_group: r.schemes.target_group,
-        benefits: r.schemes.benefits,
-        deadline: r.schemes.deadline,
-        official_link: r.schemes.official_link,
-        state: r.schemes.state,
-        match_percentage: r.match_percentage,
-        eligibility_status: r.eligibility_status as SchemeResult["eligibility_status"],
-        missing_criteria: r.missing_criteria,
-        explanation: r.explanation,
-      })));
-    }
-
-    setNotifications(notifRes.data ?? []);
     setLoading(false);
   };
 
   const saveProfile = async () => {
-    if (!user) return;
-    const { error } = await supabase.from("user_profiles").upsert({
-      user_id: user.id,
+    // Build the profile payload once
+    const payload = {
       full_name: profileForm.full_name || null,
       age: profileForm.age ? parseInt(profileForm.age) : null,
       gender: profileForm.gender || null,
@@ -113,9 +217,31 @@ const Dashboard = () => {
       state: profileForm.state || null,
       district: profileForm.district || null,
       category: profileForm.category || null,
-    });
-    if (error) toast({ title: "Error saving profile", variant: "destructive" });
-    else toast({ title: "Profile updated!" });
+    };
+
+    // Always persist locally so refresh restores values even if backend fails
+    try {
+      localStorage.setItem("userProfile", JSON.stringify(payload));
+    } catch (e) {
+      console.error("localStorage save failed", e);
+    }
+
+    if (user) {
+      try {
+        const { error } = await supabase
+          .from("user_profiles")
+          .upsert({ user_id: user.id, ...payload }, { onConflict: "user_id" });
+        if (error) throw error;
+        toast({ title: "Profile updated!" });
+        return;
+      } catch (e) {
+        console.error("Backend profile save failed, using localStorage", e);
+        toast({ title: "Profile saved locally" });
+        return;
+      }
+    }
+
+    toast({ title: "Profile saved!" });
   };
 
   if (loading) {

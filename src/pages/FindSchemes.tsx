@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,41 @@ const FindSchemes = () => {
   const { toast } = useToast();
   const t = useTranslation();
 
+  // Hydrate saved scheme IDs from localStorage so toggle state survives refresh
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("savedSchemes");
+      if (raw) {
+        const list: SchemeResult[] = JSON.parse(raw);
+        setSavedIds(new Set(list.map((s) => s.id)));
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  const pushHistory = (items: SchemeResult[]) => {
+    try {
+      const raw = localStorage.getItem("schemeHistory");
+      const existing: SchemeResult[] = raw ? JSON.parse(raw) : [];
+      const merged = [...items, ...existing.filter((e) => !items.some((i) => i.id === e.id))].slice(0, 30);
+      localStorage.setItem("schemeHistory", JSON.stringify(merged));
+    } catch { /* ignore */ }
+  };
+
+  const pushNotification = (title: string, message: string) => {
+    try {
+      const raw = localStorage.getItem("notifications");
+      const list = raw ? JSON.parse(raw) : [];
+      list.unshift({
+        id: `local-${Date.now()}`,
+        title,
+        message,
+        is_read: false,
+        created_at: new Date().toISOString(),
+      });
+      localStorage.setItem("notifications", JSON.stringify(list.slice(0, 50)));
+    } catch { /* ignore */ }
+  };
+
   const handleNlpSearch = async () => {
     if (!nlpQuery.trim()) { toast({ title: "Please describe yourself", variant: "destructive" }); return; }
     setLoading(true);
@@ -35,7 +70,9 @@ const FindSchemes = () => {
         body: { query: nlpQuery, mode: "nlp" },
       });
       if (error) throw error;
-      setResults(data?.recommendations ?? []);
+      const recs = data?.recommendations ?? [];
+      setResults(recs);
+      pushHistory(recs);
     } catch {
       toast({ title: "Error fetching recommendations", variant: "destructive" });
       await handleLocalFallback(nlpQuery);
@@ -51,7 +88,9 @@ const FindSchemes = () => {
         body: { profile: formData, mode: "form" },
       });
       if (error) throw error;
-      setResults(data?.recommendations ?? []);
+      const recs = data?.recommendations ?? [];
+      setResults(recs);
+      pushHistory(recs);
     } catch {
       await handleLocalFallback();
     }
@@ -101,23 +140,44 @@ const FindSchemes = () => {
       };
     });
 
-    setResults(scored.sort((a, b) => b.match_percentage - a.match_percentage).slice(0, 10));
+    const final = scored.sort((a, b) => b.match_percentage - a.match_percentage).slice(0, 10);
+    setResults(final);
+    pushHistory(final);
   };
 
   const handleSave = async (scheme: SchemeResult) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      toast({ title: "Please login to save schemes" });
-      return;
+    // Local toggle (always runs so the UI works without auth)
+    let nextList: SchemeResult[] = [];
+    try {
+      const raw = localStorage.getItem("savedSchemes");
+      const existing: SchemeResult[] = raw ? JSON.parse(raw) : [];
+      const exists = existing.some((s) => s.id === scheme.id);
+      nextList = exists
+        ? existing.filter((s) => s.id !== scheme.id)
+        : [scheme, ...existing];
+      localStorage.setItem("savedSchemes", JSON.stringify(nextList));
+      setSavedIds(new Set(nextList.map((s) => s.id)));
+      if (exists) {
+        toast({ title: "Removed from saved schemes" });
+      } else {
+        toast({ title: "Scheme saved!" });
+        pushNotification("Scheme saved", scheme.scheme_name);
+      }
+    } catch (e) {
+      console.error("local save failed", e);
     }
-    if (savedIds.has(scheme.id)) {
-      await supabase.from("saved_schemes").delete().eq("user_id", session.user.id).eq("scheme_id", scheme.id);
-      setSavedIds(prev => { const n = new Set(prev); n.delete(scheme.id); return n; });
-      toast({ title: "Removed from saved schemes" });
-    } else {
-      await supabase.from("saved_schemes").insert({ user_id: session.user.id, scheme_id: scheme.id });
-      setSavedIds(prev => new Set(prev).add(scheme.id));
-      toast({ title: "Scheme saved!" });
+
+    // Best-effort backend sync if logged in
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      if (savedIds.has(scheme.id)) {
+        await supabase.from("saved_schemes").delete().eq("user_id", session.user.id).eq("scheme_id", scheme.id);
+      } else {
+        await supabase.from("saved_schemes").insert({ user_id: session.user.id, scheme_id: scheme.id });
+      }
+    } catch (e) {
+      console.error("backend save sync failed", e);
     }
   };
 
