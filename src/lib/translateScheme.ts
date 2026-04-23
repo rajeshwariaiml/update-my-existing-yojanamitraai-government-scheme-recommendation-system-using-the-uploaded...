@@ -75,14 +75,19 @@ export const translateTargetGroup = (value: string | null | undefined, lang: Lan
 export const translateState = (value: string | null | undefined, lang: Lang) =>
   lang === "kn" ? lookup(STATE_KN, value) : (value ?? "");
 
-// Translate a free-text fallback explanation produced by the local matcher.
+// Translate a free-text fallback explanation produced by the local matcher
+// or the recommend-schemes edge function.
 export const translateExplanation = (text: string | undefined, lang: Lang) => {
   if (!text || lang !== "kn") return text ?? "";
   return text
     .replace(/Matched based on strong alignment with your age, income, and location profile\./i,
       "ನಿಮ್ಮ ವಯಸ್ಸು, ಆದಾಯ ಮತ್ತು ಸ್ಥಳಕ್ಕೆ ಬಲವಾದ ಹೊಂದಾಣಿಕೆಯ ಆಧಾರದಲ್ಲಿ ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ.")
     .replace(/Matched based on partial alignment with your age, income, and location profile\./i,
-      "ನಿಮ್ಮ ವಯಸ್ಸು, ಆದಾಯ ಮತ್ತು ಸ್ಥಳಕ್ಕೆ ಭಾಗಶಃ ಹೊಂದಾಣಿಕೆಯ ಆಧಾರದಲ್ಲಿ ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ.");
+      "ನಿಮ್ಮ ವಯಸ್ಸು, ಆದಾಯ ಮತ್ತು ಸ್ಥಳಕ್ಕೆ ಭಾಗಶಃ ಹೊಂದಾಣಿಕೆಯ ಆಧಾರದಲ್ಲಿ ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ.")
+    .replace(/Matched based on strong alignment with your demographic profile\./i,
+      "ನಿಮ್ಮ ಜನಸಂಖ್ಯಾ ಪ್ರೊಫೈಲ್‌ಗೆ ಬಲವಾದ ಹೊಂದಾಣಿಕೆಯ ಆಧಾರದಲ್ಲಿ ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ.")
+    .replace(/Matched based on partial alignment with your demographic profile\./i,
+      "ನಿಮ್ಮ ಜನಸಂಖ್ಯಾ ಪ್ರೊಫೈಲ್‌ಗೆ ಭಾಗಶಃ ಹೊಂದಾಣಿಕೆಯ ಆಧಾರದಲ್ಲಿ ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ.");
 };
 
 // Translate a single "missing criterion" sentence emitted by the local matcher.
