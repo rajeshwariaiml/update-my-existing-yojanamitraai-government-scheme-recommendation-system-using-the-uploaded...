@@ -274,6 +274,32 @@ const Dashboard = () => {
     toast({ title: "Profile saved!" });
   };
 
+  const handleToggleSavedScheme = async (scheme: SchemeResult) => {
+    const exists = savedSchemes.some((item) => item.id === scheme.id);
+    const updated = exists
+      ? savedSchemes.filter((item) => item.id !== scheme.id)
+      : [scheme, ...savedSchemes];
+
+    setSavedSchemes(updated);
+
+    try {
+      localStorage.setItem("savedSchemes", JSON.stringify(updated));
+    } catch (e) {
+      console.error("saved schemes localStorage update failed", e);
+    }
+
+    try {
+      if (!user) return;
+      if (exists) {
+        await supabase.from("saved_schemes").delete().eq("user_id", user.id).eq("scheme_id", scheme.id);
+      } else {
+        await supabase.from("saved_schemes").insert({ user_id: user.id, scheme_id: scheme.id });
+      }
+    } catch (e) {
+      console.error("saved schemes backend sync failed", e);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -349,7 +375,7 @@ const Dashboard = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {savedSchemes.map(s => <SchemeCard key={s.id} scheme={s} isSaved />)}
+                  {savedSchemes.map(s => <SchemeCard key={s.id} scheme={s} onSave={handleToggleSavedScheme} isSaved />)}
                 </div>
               )}
             </TabsContent>
