@@ -132,12 +132,59 @@ export const translateExplanation = (text: string | undefined, lang: Lang) => {
   return out;
 };
 
+// Word-level dictionary used for benefits / eligibility / criteria fallbacks
+// when no *_kn variant is present in the dataset.
+const PHRASE_KN: Array<[RegExp, string]> = [
+  [/Must belong to BPL category/gi, "BPL ವರ್ಗಕ್ಕೆ ಸೇರಿರಬೇಕು"],
+  [/Must belong to APL category/gi, "APL ವರ್ಗಕ್ಕೆ ಸೇರಿರಬೇಕು"],
+  [/Below Poverty Line/gi, "ಬಡತನ ರೇಖೆಗಿಂತ ಕೆಳಗೆ"],
+  [/Above Poverty Line/gi, "ಬಡತನ ರೇಖೆಗಿಂತ ಮೇಲೆ"],
+  [/Annual income/gi, "ವಾರ್ಷಿಕ ಆದಾಯ"],
+  [/Family income/gi, "ಕುಟುಂಬದ ಆದಾಯ"],
+  [/Must be a resident of/gi, "ನಿವಾಸಿ ಆಗಿರಬೇಕು"],
+  [/Must be a citizen of India/gi, "ಭಾರತದ ಪ್ರಜೆಯಾಗಿರಬೇಕು"],
+  [/Must be a citizen/gi, "ಪ್ರಜೆಯಾಗಿರಬೇಕು"],
+  [/Must be a student/gi, "ವಿದ್ಯಾರ್ಥಿಯಾಗಿರಬೇಕು"],
+  [/Must be a farmer/gi, "ರೈತನಾಗಿರಬೇಕು"],
+  [/Must be unemployed/gi, "ನಿರುದ್ಯೋಗಿಯಾಗಿರಬೇಕು"],
+  [/Must be married/gi, "ವಿವಾಹಿತರಾಗಿರಬೇಕು"],
+  [/Must be unmarried/gi, "ಅವಿವಾಹಿತರಾಗಿರಬೇಕು"],
+  [/Financial assistance/gi, "ಆರ್ಥಿಕ ಸಹಾಯ"],
+  [/Health insurance/gi, "ಆರೋಗ್ಯ ವಿಮೆ"],
+  [/Scholarship/gi, "ವಿದ್ಯಾರ್ಥಿವೇತನ"],
+  [/Subsidy/gi, "ಸಬ್ಸಿಡಿ"],
+  [/Loan/gi, "ಸಾಲ"],
+  [/per year/gi, "ಪ್ರತಿ ವರ್ಷ"],
+  [/per month/gi, "ಪ್ರತಿ ತಿಂಗಳು"],
+  [/per family/gi, "ಪ್ರತಿ ಕುಟುಂಬ"],
+  [/lakh/gi, "ಲಕ್ಷ"],
+  [/years/gi, "ವರ್ಷಗಳು"],
+  [/year/gi, "ವರ್ಷ"],
+  [/and above/gi, "ಮತ್ತು ಮೇಲೆ"],
+  [/and below/gi, "ಮತ್ತು ಕೆಳಗೆ"],
+  [/Eligible:/gi, "ಅರ್ಹತೆ:"],
+];
+
+const phraseTranslate = (text: string) => {
+  let out = text;
+  for (const [re, kn] of PHRASE_KN) out = out.replace(re, kn);
+  return out;
+};
+
 // Translate a single "missing criterion" sentence emitted by the local matcher.
 export const translateMissingCriterion = (text: string, lang: Lang) => {
   if (lang !== "kn") return text;
-  return text
+  const out = text
     .replace(/^Age must be (\d+)-(\d+)$/i, "ವಯಸ್ಸು $1-$2 ಆಗಿರಬೇಕು")
     .replace(/^Income must be under ₹([\d,]+)$/i, "ಆದಾಯ ₹$1 ಗಿಂತ ಕಡಿಮೆ ಇರಬೇಕು")
     .replace(/^Must be from (.+)$/i, (_, s) => `${lookup(STATE_KN, s)} ನಿವಾಸಿ ಆಗಿರಬೇಕು`)
     .replace(/^(.+) applicants only$/i, (_, g) => `ಕೇವಲ ${g === "Female" ? "ಮಹಿಳೆಯರು" : g === "Male" ? "ಪುರುಷರು" : g} ಮಾತ್ರ`);
+  return phraseTranslate(out);
+};
+
+// Translate free-text benefits / eligibility / description when a *_kn
+// variant is not available in the dataset.
+export const translateFreeText = (text: string | undefined | null, lang: Lang) => {
+  if (!text || lang !== "kn") return text ?? "";
+  return phraseTranslate(text);
 };
