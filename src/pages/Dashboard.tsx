@@ -23,8 +23,38 @@ const Dashboard = () => {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [profileForm, setProfileForm] = useState({ full_name: "", age: "", gender: "", income: "", occupation: "", education_level: "", state: "", district: "", category: "" });
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const t = useTranslation();
+
+  // Determine active tab from URL query (?tab=saved|history|profile|notifications)
+  const params = new URLSearchParams(location.search);
+  const initialTab = params.get("tab") || (params.get("saved") === "true" ? "saved" : "saved");
+  const [activeTab, setActiveTab] = useState<string>(initialTab);
+
+  useEffect(() => {
+    const p = new URLSearchParams(location.search);
+    const tab = p.get("tab");
+    if (tab && tab !== activeTab) setActiveTab(tab);
+    else if (p.get("saved") === "true" && activeTab !== "saved") setActiveTab("saved");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
+
+  // Mark notifications as read when alerts tab opens
+  useEffect(() => {
+    if (activeTab !== "notifications") return;
+    if (notifications.length === 0) return;
+    if (!notifications.some(n => !n.is_read)) return;
+    const updated = notifications.map(n => ({ ...n, is_read: true }));
+    setNotifications(updated);
+    try {
+      const stored = JSON.parse(localStorage.getItem("notifications") || "[]");
+      const merged = stored.map((n: any) => ({ ...n, is_read: true }));
+      localStorage.setItem("notifications", JSON.stringify(merged));
+    } catch (e) {
+      console.error("notifications mark-read failed", e);
+    }
+  }, [activeTab, notifications]);
 
   // Local storage helpers (fallback for unauthenticated demo flow)
   const loadLocalProfile = () => {
