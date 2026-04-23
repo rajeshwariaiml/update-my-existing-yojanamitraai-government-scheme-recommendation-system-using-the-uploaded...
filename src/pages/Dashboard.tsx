@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -23,8 +23,38 @@ const Dashboard = () => {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [profileForm, setProfileForm] = useState({ full_name: "", age: "", gender: "", income: "", occupation: "", education_level: "", state: "", district: "", category: "" });
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const t = useTranslation();
+
+  // Determine active tab from URL query (?tab=saved|history|profile|notifications)
+  const params = new URLSearchParams(location.search);
+  const initialTab = params.get("tab") || (params.get("saved") === "true" ? "saved" : "saved");
+  const [activeTab, setActiveTab] = useState<string>(initialTab);
+
+  useEffect(() => {
+    const p = new URLSearchParams(location.search);
+    const tab = p.get("tab");
+    if (tab && tab !== activeTab) setActiveTab(tab);
+    else if (p.get("saved") === "true" && activeTab !== "saved") setActiveTab("saved");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
+
+  // Mark notifications as read when alerts tab opens
+  useEffect(() => {
+    if (activeTab !== "notifications") return;
+    if (notifications.length === 0) return;
+    if (!notifications.some(n => !n.is_read)) return;
+    const updated = notifications.map(n => ({ ...n, is_read: true }));
+    setNotifications(updated);
+    try {
+      const stored = JSON.parse(localStorage.getItem("notifications") || "[]");
+      const merged = stored.map((n: any) => ({ ...n, is_read: true }));
+      localStorage.setItem("notifications", JSON.stringify(merged));
+    } catch (e) {
+      console.error("notifications mark-read failed", e);
+    }
+  }, [activeTab, notifications]);
 
   // Local storage helpers (fallback for unauthenticated demo flow)
   const loadLocalProfile = () => {
@@ -275,7 +305,11 @@ const Dashboard = () => {
                 <p className="text-xs text-muted-foreground">{t("discover_new_schemes")}</p>
               </div>
             </Link>
-            <div className="p-5 rounded-lg bg-card border border-border flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => { setActiveTab("saved"); navigate("/dashboard?tab=saved"); }}
+              className="text-left p-5 rounded-lg bg-card border border-border card-hover flex items-center gap-4 focus:outline-none focus:ring-2 focus:ring-primary/40"
+            >
               <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
                 <Bookmark className="h-5 w-5 text-accent" />
               </div>
@@ -283,8 +317,12 @@ const Dashboard = () => {
                 <h3 className="font-display font-semibold text-sm">{t("saved_schemes")}</h3>
                 <p className="text-xs text-muted-foreground">{t("saved_count", { count: savedSchemes.length })}</p>
               </div>
-            </div>
-            <div className="p-5 rounded-lg bg-card border border-border flex items-center gap-4">
+            </button>
+            <button
+              type="button"
+              onClick={() => { setActiveTab("notifications"); navigate("/dashboard?tab=notifications"); }}
+              className="text-left p-5 rounded-lg bg-card border border-border card-hover flex items-center gap-4 focus:outline-none focus:ring-2 focus:ring-primary/40"
+            >
               <div className="w-10 h-10 rounded-lg bg-civic-orange/10 flex items-center justify-center">
                 <Bell className="h-5 w-5 text-civic-orange" />
               </div>
@@ -292,10 +330,10 @@ const Dashboard = () => {
                 <h3 className="font-display font-semibold text-sm">{t("notifications")}</h3>
                 <p className="text-xs text-muted-foreground">{t("unread_count", { count: notifications.filter(n => !n.is_read).length })}</p>
               </div>
-            </div>
+            </button>
           </div>
 
-          <Tabs defaultValue="saved" className="animate-fade-up">
+          <Tabs value={activeTab} onValueChange={(v) => { setActiveTab(v); navigate(`/dashboard?tab=${v}`, { replace: true }); }} className="animate-fade-up">
             <TabsList className="mb-6">
               <TabsTrigger value="saved" className="gap-1.5"><Bookmark className="h-4 w-4" /> {t("saved")}</TabsTrigger>
               <TabsTrigger value="history" className="gap-1.5"><Clock className="h-4 w-4" /> {t("history")}</TabsTrigger>
