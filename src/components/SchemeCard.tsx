@@ -126,12 +126,10 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
         </div>
       )}
 
-      {scheme.deadline && (
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Clock className="h-3.5 w-3.5" />
-          {t("deadline")} <span className="font-medium text-foreground">{scheme.deadline}</span>
-        </div>
-      )}
+      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <Clock className="h-3.5 w-3.5" />
+        {t("deadline")} <span className="font-medium text-foreground">{scheme.deadline || t("ongoing")}</span>
+      </div>
 
       <div className="flex items-center gap-2 pt-1">
         {scheme.official_link && (

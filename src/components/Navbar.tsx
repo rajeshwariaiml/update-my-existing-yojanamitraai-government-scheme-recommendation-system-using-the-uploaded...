@@ -6,14 +6,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { User as SupaUser } from "@supabase/supabase-js";
 import LanguageToggle from "@/components/LanguageToggle";
-import { useTranslation } from "@/context/LanguageContext";
+import { useLanguage } from "@/context/LanguageContext";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<SupaUser | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const t = useTranslation();
+  const { language, t } = useLanguage();
+  const isKn = language === "kn";
+  const brandTitle = isKn ? "ಯೋಜನಾಮಿತ್ರ AI" : "YojanaMitraAI";
+  const brandTagline = isKn
+    ? "ಸರ್ಕಾರಿ ಯೋಜನೆಗಳಿಗೆ ನಿಮ್ಮ ಮಾರ್ಗದರ್ಶಿ"
+    : "Your Guide to Government Schemes";
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -43,8 +48,8 @@ const Navbar = () => {
         <Link to="/" className="flex items-center gap-2.5">
           <img src="/logo.png" alt="YojanaMitraAI Logo" className="w-8 h-8 object-contain" />
           <div className="leading-none">
-            <span className="font-display text-lg font-bold text-foreground block">YojanaMitraAI</span>
-            <span className="text-[10px] text-muted-foreground font-medium tracking-wide">Your Guide to Government Schemes</span>
+            <span className="font-display text-lg font-bold text-foreground block">{brandTitle}</span>
+            <span className="text-[10px] text-muted-foreground font-medium tracking-wide">{brandTagline}</span>
           </div>
         </Link>
 
