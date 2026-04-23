@@ -39,6 +39,20 @@ const TARGET_KN: Record<string, string> = {
   "entrepreneurs": "ಉದ್ಯಮಿಗಳು",
   "unemployed": "ನಿರುದ್ಯೋಗಿಗಳು",
   "general": "ಸಾಮಾನ್ಯ",
+  "bpl families": "BPL ಕುಟುಂಬಗಳು",
+  "apl families": "APL ಕುಟುಂಬಗಳು",
+  "rural households": "ಗ್ರಾಮೀಣ ಕುಟುಂಬಗಳು",
+  "urban households": "ನಗರ ಕುಟುಂಬಗಳು",
+  "urban poor": "ನಗರ ಬಡವರು",
+  "rural poor": "ಗ್ರಾಮೀಣ ಬಡವರು",
+  "artisans": "ಕುಶಲಕರ್ಮಿಗಳು",
+  "workers": "ಕಾರ್ಮಿಕರು",
+  "girls": "ಹುಡುಗಿಯರು",
+  "boys": "ಹುಡುಗರು",
+  "children": "ಮಕ್ಕಳು",
+  "elderly": "ವೃದ್ಧರು",
+  "disabled": "ಅಂಗವಿಕಲರು",
+  "differently abled": "ವಿಶೇಷ ಚೇತನರು",
 };
 
 const STATE_KN: Record<string, string> = {
