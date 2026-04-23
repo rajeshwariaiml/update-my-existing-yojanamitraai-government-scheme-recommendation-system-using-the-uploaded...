@@ -2,6 +2,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Bookmark, ExternalLink, CheckCircle2, AlertTriangle, Clock } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import {
+  translateCategory,
+  translateTargetGroup,
+  translateState,
+  translateExplanation,
+  translateMissingCriterion,
+} from "@/lib/translateScheme";
 
 export interface SchemeResult {
   id: string;
@@ -59,8 +66,14 @@ const SchemeCard = ({ scheme, onSave, isSaved }: SchemeCardProps) => {
     ? (scheme.description_kn || scheme.description)
     : (scheme.description_en || scheme.description);
   const displayExplanation = isKn
-    ? (scheme.explanation_kn || scheme.explanation)
+    ? (scheme.explanation_kn || translateExplanation(scheme.explanation, "kn"))
     : scheme.explanation;
+  const displayEligibility = isKn
+    ? (scheme.eligibility_kn || scheme.eligibility)
+    : (scheme.eligibility_en || scheme.eligibility);
+  const displayCategory = translateCategory(scheme.category, language);
+  const displayTarget = translateTargetGroup(scheme.target_group, language);
+  const displayState = translateState(scheme.state, language);
 
   return (
     <div className="bg-card border border-border rounded-lg p-5 card-hover space-y-3">
@@ -68,9 +81,9 @@ const SchemeCard = ({ scheme, onSave, isSaved }: SchemeCardProps) => {
         <div className="flex-1 min-w-0">
           <h3 className="font-display font-semibold text-card-foreground text-base leading-snug">{displayTitle}</h3>
           <div className="flex flex-wrap gap-1.5 mt-2">
-            <Badge variant="secondary" className="text-xs">{scheme.category}</Badge>
-            <Badge variant="outline" className="text-xs">{scheme.target_group}</Badge>
-            {scheme.state && <Badge variant="outline" className="text-xs">{scheme.state}</Badge>}
+            <Badge variant="secondary" className="text-xs">{displayCategory}</Badge>
+            <Badge variant="outline" className="text-xs">{displayTarget}</Badge>
+            {displayState && <Badge variant="outline" className="text-xs">{displayState}</Badge>}
           </div>
         </div>
         <div className="text-right shrink-0">
@@ -90,6 +103,12 @@ const SchemeCard = ({ scheme, onSave, isSaved }: SchemeCardProps) => {
         <p className="text-xs text-muted-foreground/80 leading-relaxed">{displayDescription}</p>
       )}
 
+      {displayEligibility && (
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          <span className="font-semibold text-foreground">{t("eligibility_label")}</span> {displayEligibility}
+        </p>
+      )}
+
       {displayExplanation && (
         <div className="bg-civic-blue-light rounded-md p-3 text-xs text-foreground">
           <span className="font-semibold">{t("why_recommended")}</span> {displayExplanation}
@@ -100,7 +119,7 @@ const SchemeCard = ({ scheme, onSave, isSaved }: SchemeCardProps) => {
         <div className="bg-civic-orange-light rounded-md p-3 text-xs space-y-1">
           <span className="font-semibold text-civic-orange">{t("missing_criteria")}</span>
           <ul className="list-disc list-inside text-foreground/80">
-            {scheme.missing_criteria.map((c, i) => <li key={i}>{c}</li>)}
+            {scheme.missing_criteria.map((c, i) => <li key={i}>{translateMissingCriterion(c, language)}</li>)}
           </ul>
         </div>
       )}
