@@ -140,7 +140,9 @@ const FindSchemes = () => {
       };
     });
 
-    setResults(scored.sort((a, b) => b.match_percentage - a.match_percentage).slice(0, 10));
+    const final = scored.sort((a, b) => b.match_percentage - a.match_percentage).slice(0, 10);
+    setResults(final);
+    pushHistory(final);
   };
 
   const handleSave = async (scheme: SchemeResult) => {
