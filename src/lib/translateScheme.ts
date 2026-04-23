@@ -83,8 +83,14 @@ const lookup = (map: Record<string, string>, value?: string | null) => {
 export const translateCategory = (value: string | null | undefined, lang: Lang) =>
   lang === "kn" ? lookup(CATEGORY_KN, value) : (value ?? "");
 
-export const translateTargetGroup = (value: string | null | undefined, lang: Lang) =>
-  lang === "kn" ? lookup(TARGET_KN, value) : (value ?? "");
+export const translateTargetGroup = (value: string | null | undefined, lang: Lang) => {
+  if (lang !== "kn") return value ?? "";
+  if (!value) return "";
+  const key = value.trim().toLowerCase();
+  if (TARGET_KN[key]) return TARGET_KN[key];
+  // Fall back to phrase-level translation so multi-word groups still convert.
+  return phraseTranslate(value);
+};
 
 export const translateState = (value: string | null | undefined, lang: Lang) =>
   lang === "kn" ? lookup(STATE_KN, value) : (value ?? "");
