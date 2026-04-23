@@ -9,6 +9,7 @@ import {
   translateExplanation,
   translateMissingCriterion,
 } from "@/lib/translateScheme";
+import { enrichWithMultilingual } from "@/lib/multilingualSchemes";
 
 export interface SchemeResult {
   id: string;
@@ -43,9 +44,10 @@ interface SchemeCardProps {
   isSaved?: boolean;
 }
 
-const SchemeCard = ({ scheme, onSave, isSaved }: SchemeCardProps) => {
+const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => {
   const { language, t } = useLanguage();
   const isKn = language === "kn";
+  const scheme = enrichWithMultilingual(rawScheme);
 
   const statusConfig = {
     eligible: { label: t("eligible"), icon: CheckCircle2, className: "bg-civic-green-light text-civic-green" },
