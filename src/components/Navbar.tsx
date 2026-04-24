@@ -47,7 +47,7 @@ const Navbar = () => {
       <div className="container mx-auto flex items-center justify-between py-3 px-4">
         <Link to="/" className="flex items-center gap-2.5">
           <img src="/logo.png" alt="YojanaMitraAI Logo" className="w-8 h-8 object-contain" />
-          <div className="leading-none">
+          <div className="leading-none" data-allow-english>
             <span className="font-display text-lg font-bold text-foreground block">{brandTitle}</span>
             <span className="text-[10px] text-muted-foreground font-medium tracking-wide">{brandTagline}</span>
           </div>
