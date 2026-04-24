@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { useKannadaLeakValidator } from "@/hooks/useKannadaLeakValidator";
+import KannadaLeakOverlay from "@/components/KannadaLeakOverlay";
 import Index from "./pages/Index";
 import FindSchemes from "./pages/FindSchemes";
 import Dashboard from "./pages/Dashboard";
@@ -18,15 +19,18 @@ const queryClient = new QueryClient();
 const AppRoutes = () => {
   useKannadaLeakValidator();
   return (
-    <Routes>
-      <Route path="/" element={<Index />} />
-      <Route path="/find-schemes" element={<FindSchemes />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/admin" element={<AdminPanel />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/find-schemes" element={<FindSchemes />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/admin" element={<AdminPanel />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <KannadaLeakOverlay />
+    </>
   );
 };
 
