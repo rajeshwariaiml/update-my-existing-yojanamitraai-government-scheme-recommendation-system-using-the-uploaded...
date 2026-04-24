@@ -19,12 +19,12 @@ const Signup = () => {
   const t = useTranslation();
 
   const validateForm = (): string | null => {
-    if (!fullName.trim()) return "Please enter your full name.";
-    if (!email.trim()) return "Please enter your email address.";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Please enter a valid email address.";
-    if (password.length < 6) return "Password must be at least 6 characters.";
-    if (!/[A-Z]/.test(password)) return "Password must contain at least one uppercase letter.";
-    if (!/[0-9]/.test(password)) return "Password must contain at least one number.";
+    if (!fullName.trim()) return t("toast_validation_full_name");
+    if (!email.trim()) return t("toast_validation_email");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return t("toast_validation_email_valid");
+    if (password.length < 6) return t("toast_validation_password_len");
+    if (!/[A-Z]/.test(password)) return t("toast_validation_password_upper");
+    if (!/[0-9]/.test(password)) return t("toast_validation_password_num");
     return null;
   };
 
@@ -32,7 +32,7 @@ const Signup = () => {
     e.preventDefault();
     const validationError = validateForm();
     if (validationError) {
-      toast({ title: "Validation Error", description: validationError, variant: "destructive" });
+      toast({ title: t("toast_validation_error"), description: validationError, variant: "destructive" });
       return;
     }
     setLoading(true);
@@ -46,16 +46,16 @@ const Signup = () => {
     if (error) {
       let description = error.message;
       if (error.message.includes("already registered") || error.message.includes("already exists")) {
-        description = "An account with this email already exists. Please sign in instead.";
+        description = t("toast_account_exists");
       }
-      toast({ title: "Signup Failed", description, variant: "destructive" });
+      toast({ title: t("toast_signup_failed"), description, variant: "destructive" });
       return;
     }
 
     if (data?.user) {
       toast({
-        title: "🎉 Account Created Successfully!",
-        description: `Welcome, ${fullName}! Redirecting to your dashboard...`,
+        title: t("toast_account_created"),
+        description: t("toast_account_created_desc", { name: fullName }),
       });
       setTimeout(() => navigate("/dashboard"), 1200);
     }
@@ -66,7 +66,7 @@ const Signup = () => {
       <div className="w-full max-w-md bg-card border border-border rounded-lg p-8 shadow-[var(--shadow-card)] animate-fade-up">
         <div className="flex justify-end mb-2"><LanguageToggle /></div>
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 mb-4">
+          <Link to="/" className="inline-flex items-center gap-2 mb-4" data-allow-english>
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <Shield className="h-4 w-4 text-primary-foreground" />
             </div>
@@ -78,15 +78,15 @@ const Signup = () => {
         <form onSubmit={handleSignup} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">{t("name")}</Label>
-            <Input id="name" placeholder="Your full name" value={fullName} onChange={e => setFullName(e.target.value)} required />
+            <Input id="name" placeholder={t("placeholder_full_name")} value={fullName} onChange={e => setFullName(e.target.value)} required />
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">{t("email")}</Label>
-            <Input id="email" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required />
+            <Input id="email" type="email" placeholder={t("placeholder_email")} value={email} onChange={e => setEmail(e.target.value)} required />
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">{t("password")}</Label>
-            <Input id="password" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
+            <Input id="password" type="password" placeholder={t("placeholder_password")} value={password} onChange={e => setPassword(e.target.value)} required />
             <p className="text-xs text-muted-foreground">{t("password_hint")}</p>
           </div>
           <Button type="submit" disabled={loading} className="w-full gap-2">

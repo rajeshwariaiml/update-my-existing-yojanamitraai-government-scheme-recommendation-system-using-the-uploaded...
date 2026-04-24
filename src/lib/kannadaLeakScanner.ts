@@ -26,6 +26,7 @@ const ALLOWLIST = new Set<string>([
   "ai",
   "yojanamitra",
   "yojanamitraai",
+  "nlp",
   "api",
   "url",
   "id",
@@ -69,6 +70,8 @@ const ALLOWLIST = new Set<string>([
   "otp",
   "v1",
   "v2",
+  "iti",
+  "phd",
 ]);
 
 // Latin word matcher: 2+ ASCII letters in a row.

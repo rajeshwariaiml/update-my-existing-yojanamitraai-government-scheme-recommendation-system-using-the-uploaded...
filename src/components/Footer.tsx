@@ -8,7 +8,7 @@ const Footer = () => {
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-3" data-allow-english>
               <Shield className="h-5 w-5 text-primary" />
               <span className="font-display text-lg font-bold">YojanaMitraAI</span>
             </div>
@@ -28,7 +28,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="mt-8 pt-4 border-t border-border text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} YojanaMitraAI. {t("footer_copy")}
+          <span data-allow-english>© {new Date().getFullYear()} YojanaMitraAI.</span> {t("footer_copy")}
         </div>
       </div>
     </footer>

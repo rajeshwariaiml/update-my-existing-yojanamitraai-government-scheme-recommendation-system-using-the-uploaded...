@@ -69,7 +69,7 @@ const AdminPanel = () => {
 
   const handleSave = async () => {
     if (!form.scheme_name || !form.category || !form.benefits) {
-      toast({ title: "Fill required fields (name, category, benefits)", variant: "destructive" });
+      toast({ title: t("toast_admin_fill_required"), variant: "destructive" });
       return;
     }
     setSaving(true);
@@ -93,12 +93,12 @@ const AdminPanel = () => {
 
     if (editingId) {
       const { error } = await supabase.from("schemes").update(payload).eq("id", editingId);
-      if (error) toast({ title: "Error updating", variant: "destructive" });
-      else toast({ title: "Scheme updated!" });
+      if (error) toast({ title: t("toast_admin_update_error"), variant: "destructive" });
+      else toast({ title: t("toast_admin_scheme_updated") });
     } else {
       const { error } = await supabase.from("schemes").insert(payload);
-      if (error) toast({ title: "Error adding scheme", description: error.message, variant: "destructive" });
-      else toast({ title: "Scheme added!" });
+      if (error) toast({ title: t("toast_admin_add_error"), description: error.message, variant: "destructive" });
+      else toast({ title: t("toast_admin_scheme_added") });
     }
     setForm(emptyForm);
     setEditingId(null);
@@ -120,8 +120,8 @@ const AdminPanel = () => {
 
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from("schemes").delete().eq("id", id);
-    if (error) toast({ title: "Error deleting", variant: "destructive" });
-    else { toast({ title: "Scheme deleted" }); loadSchemes(); }
+    if (error) toast({ title: t("toast_admin_delete_error"), variant: "destructive" });
+    else { toast({ title: t("toast_admin_scheme_deleted") }); loadSchemes(); }
   };
 
   if (isAdmin === false) {
