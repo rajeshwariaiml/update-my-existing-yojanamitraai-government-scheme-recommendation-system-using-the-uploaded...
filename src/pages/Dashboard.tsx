@@ -262,16 +262,16 @@ const Dashboard = () => {
           .from("user_profiles")
           .upsert({ user_id: user.id, ...payload }, { onConflict: "user_id" });
         if (error) throw error;
-        toast({ title: "Profile updated!" });
+        toast({ title: t("toast_profile_updated") });
         return;
       } catch (e) {
         console.error("Backend profile save failed, using localStorage", e);
-        toast({ title: "Profile saved locally" });
+        toast({ title: t("toast_profile_saved_local") });
         return;
       }
     }
 
-    toast({ title: "Profile saved!" });
+    toast({ title: t("toast_profile_saved") });
   };
 
   const handleToggleSavedScheme = async (scheme: SchemeResult) => {
@@ -308,7 +308,7 @@ const Dashboard = () => {
     );
   }
 
-  const displayName = profileForm.full_name || user?.email?.split("@")[0] || "Citizen";
+  const displayName = profileForm.full_name || user?.email?.split("@")[0] || t("default_citizen_name");
 
   return (
     <div className="min-h-screen flex flex-col">
