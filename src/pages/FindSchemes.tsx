@@ -13,10 +13,30 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "@/context/LanguageContext";
 
-const states = ["All India", "Andhra Pradesh", "Bihar", "Delhi", "Gujarat", "Haryana", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Punjab", "Rajasthan", "Tamil Nadu", "Telangana", "Uttar Pradesh", "West Bengal"];
-const occupations = ["Student", "Farmer", "Self-employed", "Salaried", "Unemployed", "Retired", "Homemaker", "Entrepreneur"];
-const educationLevels = ["Below 10th", "10th Pass", "12th Pass", "Graduate", "Post Graduate", "PhD", "Diploma/ITI"];
-const categories = ["General", "SC", "ST", "OBC", "EWS", "Minority"];
+// Canonical English values used by backend/data layer (must NOT be translated when stored)
+const STATE_VALUES = ["All India", "Andhra Pradesh", "Bihar", "Delhi", "Gujarat", "Haryana", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Punjab", "Rajasthan", "Tamil Nadu", "Telangana", "Uttar Pradesh", "West Bengal"] as const;
+const STATE_KEYS: Record<(typeof STATE_VALUES)[number], string> = {
+  "All India": "state_all_india", "Andhra Pradesh": "state_andhra_pradesh", "Bihar": "state_bihar",
+  "Delhi": "state_delhi", "Gujarat": "state_gujarat", "Haryana": "state_haryana",
+  "Karnataka": "state_karnataka", "Kerala": "state_kerala", "Madhya Pradesh": "state_madhya_pradesh",
+  "Maharashtra": "state_maharashtra", "Punjab": "state_punjab", "Rajasthan": "state_rajasthan",
+  "Tamil Nadu": "state_tamil_nadu", "Telangana": "state_telangana", "Uttar Pradesh": "state_uttar_pradesh",
+  "West Bengal": "state_west_bengal",
+};
+const OCCUPATIONS = [
+  ["Student", "occ_student"], ["Farmer", "occ_farmer"], ["Self-employed", "occ_self_employed"],
+  ["Salaried", "occ_salaried"], ["Unemployed", "occ_unemployed"], ["Retired", "occ_retired"],
+  ["Homemaker", "occ_homemaker"], ["Entrepreneur", "occ_entrepreneur"],
+] as const;
+const EDUCATION_LEVELS = [
+  ["Below 10th", "edu_below_10"], ["10th Pass", "edu_10"], ["12th Pass", "edu_12"],
+  ["Graduate", "edu_graduate"], ["Post Graduate", "edu_post_graduate"], ["PhD", "edu_phd"],
+  ["Diploma/ITI", "edu_diploma"],
+] as const;
+const CATEGORIES = [
+  ["General", "cat_general"], ["SC", "cat_sc"], ["ST", "cat_st"],
+  ["OBC", "cat_obc"], ["EWS", "cat_ews"], ["Minority", "cat_minority"],
+] as const;
 
 const FindSchemes = () => {
   const [nlpQuery, setNlpQuery] = useState("");
@@ -63,7 +83,7 @@ const FindSchemes = () => {
   };
 
   const handleNlpSearch = async () => {
-    if (!nlpQuery.trim()) { toast({ title: "Please describe yourself", variant: "destructive" }); return; }
+    if (!nlpQuery.trim()) { toast({ title: t("toast_describe_yourself"), variant: "destructive" }); return; }
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("recommend-schemes", {
@@ -74,14 +94,14 @@ const FindSchemes = () => {
       setResults(recs);
       pushHistory(recs);
     } catch {
-      toast({ title: "Error fetching recommendations", variant: "destructive" });
+      toast({ title: t("toast_fetch_error"), variant: "destructive" });
       await handleLocalFallback(nlpQuery);
     }
     setLoading(false);
   };
 
   const handleFormSearch = async () => {
-    if (!formData.age || !formData.state) { toast({ title: "Please fill age and state at minimum", variant: "destructive" }); return; }
+    if (!formData.age || !formData.state) { toast({ title: t("toast_fill_age_state"), variant: "destructive" }); return; }
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("recommend-schemes", {
@@ -158,10 +178,10 @@ const FindSchemes = () => {
       localStorage.setItem("savedSchemes", JSON.stringify(nextList));
       setSavedIds(new Set(nextList.map((s) => s.id)));
       if (exists) {
-        toast({ title: "Removed from saved schemes" });
+        toast({ title: t("toast_removed_saved") });
       } else {
-        toast({ title: "Scheme saved!" });
-        pushNotification("Scheme saved", scheme.scheme_name);
+        toast({ title: t("toast_scheme_saved") });
+        pushNotification(t("notif_scheme_saved_title"), scheme.scheme_name);
       }
     } catch (e) {
       console.error("local save failed", e);
