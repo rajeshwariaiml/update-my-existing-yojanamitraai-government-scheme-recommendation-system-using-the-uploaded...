@@ -53,14 +53,16 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
   const { language, t } = useLanguage();
   const scheme = localizeSchemeObject(rawScheme, language);
 
-  const statusConfig = {
-    eligible: { label: t("eligible"), icon: CheckCircle2, className: "bg-civic-green-light text-civic-green" },
-    partial: { label: t("partially_eligible"), icon: AlertTriangle, className: "bg-civic-orange-light text-civic-orange" },
-    not_eligible: { label: t("not_eligible"), icon: AlertTriangle, className: "bg-destructive/10 text-destructive" },
+  // Eligibility status — value derived from data, label routed through kn()
+  const statusMeta = {
+    eligible: { source: "Eligible", icon: CheckCircle2, className: "bg-civic-green-light text-civic-green" },
+    partial: { source: "Partially Eligible", icon: AlertTriangle, className: "bg-civic-orange-light text-civic-orange" },
+    not_eligible: { source: "Not Eligible", icon: AlertTriangle, className: "bg-destructive/10 text-destructive" },
   } as const;
 
-  const status = statusConfig[scheme.eligibility_status];
+  const status = statusMeta[scheme.eligibility_status];
   const StatusIcon = status.icon;
+  const statusLabel = kn(status.source, language, "eligibility_status");
 
   // Centralized Kannada fallback pipeline — every dynamic field is routed
   // through `kn()` so backend / ML-pipeline strings never leak as raw English.
@@ -92,7 +94,7 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
 
       <div className={`civic-badge ${status.className}`}>
         <StatusIcon className="h-3.5 w-3.5" />
-        {status.label}
+        {statusLabel}
       </div>
 
       <p className="text-sm text-muted-foreground leading-relaxed">{displayBenefits}</p>
@@ -124,7 +126,7 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
 
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <Clock className="h-3.5 w-3.5" />
-        {t("deadline")} <span className="font-medium text-foreground">{kn(scheme.deadline ?? undefined, language) || scheme.deadline_label || t("ongoing")}</span>
+        {t("deadline")} <span className="font-medium text-foreground">{kn(scheme.deadline ?? undefined, language, "deadline") || scheme.deadline_label || kn("Ongoing", language, "deadline")}</span>
       </div>
 
       <div className="flex items-center gap-2 pt-1">
