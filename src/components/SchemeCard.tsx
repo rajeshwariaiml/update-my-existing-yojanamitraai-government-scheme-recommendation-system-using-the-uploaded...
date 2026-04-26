@@ -94,7 +94,7 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
 
       <div className={`civic-badge ${status.className}`}>
         <StatusIcon className="h-3.5 w-3.5" />
-        {status.label}
+        {statusLabel}
       </div>
 
       <p className="text-sm text-muted-foreground leading-relaxed">{displayBenefits}</p>
@@ -126,7 +126,7 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
 
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <Clock className="h-3.5 w-3.5" />
-        {t("deadline")} <span className="font-medium text-foreground">{kn(scheme.deadline ?? undefined, language) || scheme.deadline_label || t("ongoing")}</span>
+        {t("deadline")} <span className="font-medium text-foreground">{kn(scheme.deadline ?? undefined, language, "deadline") || scheme.deadline_label || kn("Ongoing", language, "deadline")}</span>
       </div>
 
       <div className="flex items-center gap-2 pt-1">
