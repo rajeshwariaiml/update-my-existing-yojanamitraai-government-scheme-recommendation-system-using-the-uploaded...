@@ -18,6 +18,7 @@
 
 import en from "@/i18n/en.json";
 import kn_dict from "@/i18n/kn.json";
+import { WORD_KN } from "@/lib/kannadaWordDict";
 import {
   translateCategory,
   translateExplanation,
