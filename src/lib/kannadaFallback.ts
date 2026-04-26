@@ -131,8 +131,28 @@ export const kn = (
     out = translateFreeText(src, "kn") || out;
   }
 
+  // 6. SAFETY NET — word-by-word translation of any remaining Latin tokens
+  //    using the common-words dictionary. Guarantees Kannada mode never
+  //    renders a fully English sentence even when no phrase regex matched.
+  if (containsLatinWord(out)) {
+    out = wordLevelTranslate(out);
+  }
+
   return out;
 };
+
+/**
+ * Replace each Latin word token with its Kannada equivalent from
+ * WORD_KN. Words not present in the dictionary are left untouched
+ * (so brand names, scheme codes, abbreviations like "PM", "ITI",
+ * "MSME" stay readable). Numbers and punctuation are preserved.
+ */
+const wordLevelTranslate = (text: string): string =>
+  text.replace(/[A-Za-z]+/g, (word) => {
+    const lower = word.toLowerCase();
+    const replacement = WORD_KN[lower];
+    return replacement === undefined ? word : replacement;
+  });
 
 /** Apply `kn()` to an array of strings (e.g. criteria lists). */
 export const knList = (
