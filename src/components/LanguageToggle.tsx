@@ -8,25 +8,22 @@ interface Props {
 
 const LanguageToggle = ({ className }: Props) => {
   const { language, toggleLanguage } = useLanguage();
-  const isEn = language === "en";
-  // Show the TARGET language so it's unambiguous what the click will do.
-  const actionLabel = isEn ? "ಕನ್ನಡ" : "English";
-  const currentLabel = isEn ? "EN" : "KN";
-
   return (
     <Button
       variant="outline"
       size="sm"
       onClick={toggleLanguage}
       className={`gap-1.5 ${className ?? ""}`}
-      aria-label={isEn ? "Switch to Kannada" : "Switch to English"}
-      title={isEn ? "Switch to Kannada" : "Switch to English"}
-      data-allow-english
+      aria-label="Toggle language"
+      title={language === "en" ? "Switch to Kannada" : "Switch to English"}
     >
       <Languages className="h-4 w-4" />
-      <span className="text-muted-foreground text-xs font-semibold">{currentLabel}</span>
-      <span className="text-muted-foreground">→</span>
-      <span className="font-medium">{actionLabel}</span>
+      <span className="font-medium">
+        {language === "en" ? "English" : "ಕನ್ನಡ"}
+      </span>
+      <span className="text-muted-foreground text-xs">
+        {language === "en" ? "| ಕನ್ನಡ" : "| English"}
+      </span>
     </Button>
   );
 };

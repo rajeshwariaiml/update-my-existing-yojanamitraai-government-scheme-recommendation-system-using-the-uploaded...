@@ -2,8 +2,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Bookmark, ExternalLink, CheckCircle2, AlertTriangle, Clock } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { translateMissingCriterion } from "@/lib/translateScheme";
 import { localizeSchemeObject } from "@/lib/localizeSchemeObject";
-import { kn } from "@/lib/kannadaFallback";
 
 export interface SchemeResult {
   id: string;
@@ -53,27 +53,23 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
   const { language, t } = useLanguage();
   const scheme = localizeSchemeObject(rawScheme, language);
 
-  // Eligibility status — value derived from data, label routed through kn()
-  const statusMeta = {
-    eligible: { source: "Eligible", icon: CheckCircle2, className: "bg-civic-green-light text-civic-green" },
-    partial: { source: "Partially Eligible", icon: AlertTriangle, className: "bg-civic-orange-light text-civic-orange" },
-    not_eligible: { source: "Not Eligible", icon: AlertTriangle, className: "bg-destructive/10 text-destructive" },
+  const statusConfig = {
+    eligible: { label: t("eligible"), icon: CheckCircle2, className: "bg-civic-green-light text-civic-green" },
+    partial: { label: t("partially_eligible"), icon: AlertTriangle, className: "bg-civic-orange-light text-civic-orange" },
+    not_eligible: { label: t("not_eligible"), icon: AlertTriangle, className: "bg-destructive/10 text-destructive" },
   } as const;
 
-  const status = statusMeta[scheme.eligibility_status];
+  const status = statusConfig[scheme.eligibility_status];
   const StatusIcon = status.icon;
-  const statusLabel = kn(status.source, language, "eligibility_status");
 
-  // Centralized Kannada fallback pipeline — every dynamic field is routed
-  // through `kn()` so backend / ML-pipeline strings never leak as raw English.
-  const displayTitle = kn(scheme.title, language, "text", scheme.title_kn);
-  const displayBenefits = kn(scheme.benefits, language, "text", scheme.benefits_kn);
-  const displayDescription = kn(scheme.description, language, "text", scheme.description_kn);
-  const displayExplanation = kn(scheme.explanation, language, "explanation", scheme.explanation_kn);
-  const displayEligibility = kn(scheme.eligibility, language, "text", scheme.eligibility_kn);
-  const displayCategory = kn(scheme.category, language, "category", scheme.category_kn);
-  const displayTarget = kn(scheme.target_group, language, "target_group", scheme.target_group_kn);
-  const displayState = kn(scheme.state, language, "state", scheme.state_kn);
+  const displayTitle = scheme.title;
+  const displayBenefits = scheme.benefits;
+  const displayDescription = scheme.description;
+  const displayExplanation = scheme.explanation;
+  const displayEligibility = scheme.eligibility;
+  const displayCategory = scheme.category;
+  const displayTarget = scheme.target_group;
+  const displayState = scheme.state;
 
   return (
     <div className="bg-card border border-border rounded-lg p-5 card-hover space-y-3">
@@ -94,7 +90,7 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
 
       <div className={`civic-badge ${status.className}`}>
         <StatusIcon className="h-3.5 w-3.5" />
-        {statusLabel}
+        {status.label}
       </div>
 
       <p className="text-sm text-muted-foreground leading-relaxed">{displayBenefits}</p>
@@ -119,14 +115,14 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
         <div className="bg-civic-orange-light rounded-md p-3 text-xs space-y-1">
           <span className="font-semibold text-civic-orange">{t("missing_criteria")}</span>
           <ul className="list-disc list-inside text-foreground/80">
-            {scheme.missing_criteria.map((c, i) => <li key={i}>{kn(c, language, "missing_criterion")}</li>)}
+            {scheme.missing_criteria.map((c, i) => <li key={i}>{translateMissingCriterion(c, language)}</li>)}
           </ul>
         </div>
       )}
 
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <Clock className="h-3.5 w-3.5" />
-        {t("deadline")} <span className="font-medium text-foreground">{kn(scheme.deadline ?? undefined, language, "deadline") || scheme.deadline_label || kn("Ongoing", language, "deadline")}</span>
+        {t("deadline")} <span className="font-medium text-foreground">{scheme.deadline || scheme.deadline_label || t("ongoing")}</span>
       </div>
 
       <div className="flex items-center gap-2 pt-1">
