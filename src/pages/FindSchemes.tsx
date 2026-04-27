@@ -220,7 +220,7 @@ const FindSchemes = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>{t("age")} *</Label>
-                      <Input type="number" placeholder="e.g. 25" value={formData.age} onChange={e => setFormData({ ...formData, age: e.target.value })} />
+                      <Input type="number" placeholder={t("age_placeholder")} value={formData.age} onChange={e => setFormData({ ...formData, age: e.target.value })} />
                     </div>
                     <div className="space-y-2">
                       <Label>{t("gender")}</Label>
@@ -235,14 +235,14 @@ const FindSchemes = () => {
                     </div>
                     <div className="space-y-2">
                       <Label>{t("income")}</Label>
-                      <Input type="number" placeholder="e.g. 200000" value={formData.income} onChange={e => setFormData({ ...formData, income: e.target.value })} />
+                      <Input type="number" placeholder={t("income_placeholder")} value={formData.income} onChange={e => setFormData({ ...formData, income: e.target.value })} />
                     </div>
                     <div className="space-y-2">
                       <Label>{t("occupation")}</Label>
                       <Select onValueChange={v => setFormData({ ...formData, occupation: v })}>
                         <SelectTrigger><SelectValue placeholder={t("select")} /></SelectTrigger>
                         <SelectContent>
-                          {occupations.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                          {occupations.map(o => <SelectItem key={o} value={o}>{translateMetadataValue(o, language)}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -251,7 +251,7 @@ const FindSchemes = () => {
                       <Select onValueChange={v => setFormData({ ...formData, education_level: v })}>
                         <SelectTrigger><SelectValue placeholder={t("select")} /></SelectTrigger>
                         <SelectContent>
-                          {educationLevels.map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+                          {educationLevels.map(e => <SelectItem key={e} value={e}>{translateMetadataValue(e, language)}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -260,7 +260,7 @@ const FindSchemes = () => {
                       <Select onValueChange={v => setFormData({ ...formData, state: v })}>
                         <SelectTrigger><SelectValue placeholder={t("select")} /></SelectTrigger>
                         <SelectContent>
-                          {states.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                          {states.map(s => <SelectItem key={s} value={s}>{translateState(s, language)}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -269,13 +269,13 @@ const FindSchemes = () => {
                       <Select onValueChange={v => setFormData({ ...formData, category: v })}>
                         <SelectTrigger><SelectValue placeholder={t("select")} /></SelectTrigger>
                         <SelectContent>
-                          {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                          {categories.map(c => <SelectItem key={c} value={c}>{translateMetadataValue(c, language)}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
                       <Label>{t("goals")}</Label>
-                      <Input placeholder="e.g. Higher education, Housing" value={formData.goals} onChange={e => setFormData({ ...formData, goals: e.target.value })} />
+                      <Input placeholder={t("goals_placeholder")} value={formData.goals} onChange={e => setFormData({ ...formData, goals: e.target.value })} />
                     </div>
                   </div>
                   <Button onClick={handleFormSearch} disabled={loading} size="lg" className="w-full gap-2">
