@@ -351,6 +351,7 @@ const PHRASE_KN: Array<[RegExp, string]> = [
 
   // ---- Common short words (kept last; small risk of partial overlap) ----
   [/\ball india\b/gi, "ಅಖಿಲ ಭಾರತ"],
+  [/Karnataka/g, "ಕರ್ನಾಟಕ"],
   [/\bIndia\b/g, "ಭಾರತ"],
 ];
 
