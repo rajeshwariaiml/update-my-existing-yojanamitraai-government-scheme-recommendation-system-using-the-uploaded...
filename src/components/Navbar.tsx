@@ -32,7 +32,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    toast({ title: "Logged out successfully", description: "See you next time!" });
+    toast({ title: t("toast_logout_success"), description: t("toast_logout_description") });
     navigate("/");
   };
 
