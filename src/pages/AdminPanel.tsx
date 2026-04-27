@@ -165,38 +165,38 @@ const AdminPanel = () => {
               <div className="bg-card border border-border rounded-lg p-6 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Scheme Name *</Label>
+                    <Label>{t("scheme_name")} *</Label>
                     <Input value={form.scheme_name} onChange={e => setForm({ ...form, scheme_name: e.target.value })} placeholder="e.g. PM Kisan Samman Nidhi" />
                   </div>
                   <div className="space-y-2">
-                    <Label>Category *</Label>
+                    <Label>{t("category")} *</Label>
                     <Select value={form.category} onValueChange={v => setForm({ ...form, category: v })}>
                       <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                       <SelectContent>
                         {["Agriculture", "Education", "Health", "Housing", "Employment", "Women & Child", "Social Welfare", "Skill Development", "Financial Inclusion", "Other"].map(c =>
-                          <SelectItem key={c} value={c}>{c}</SelectItem>
+                          <SelectItem key={c} value={c}>{translateMetadataValue(c, language)}</SelectItem>
                         )}
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>Target Group</Label>
+                    <Label>{t("target_group")}</Label>
                     <Input value={form.target_group} onChange={e => setForm({ ...form, target_group: e.target.value })} placeholder="e.g. SC/ST Students, Farmers" />
                   </div>
                   <div className="space-y-2">
-                    <Label>Income Limit (₹)</Label>
+                    <Label>{t("income_limit")}</Label>
                     <Input type="number" value={form.income_limit} onChange={e => setForm({ ...form, income_limit: e.target.value })} placeholder="e.g. 250000" />
                   </div>
                   <div className="space-y-2">
-                    <Label>Min Age</Label>
+                    <Label>{t("min_age")}</Label>
                     <Input type="number" value={form.min_age} onChange={e => setForm({ ...form, min_age: e.target.value })} placeholder="0" />
                   </div>
                   <div className="space-y-2">
-                    <Label>Max Age</Label>
+                    <Label>{t("max_age")}</Label>
                     <Input type="number" value={form.max_age} onChange={e => setForm({ ...form, max_age: e.target.value })} placeholder="100" />
                   </div>
                   <div className="space-y-2">
-                    <Label>State</Label>
+                    <Label>{t("state")}</Label>
                     <Input value={form.state} onChange={e => setForm({ ...form, state: e.target.value })} placeholder="All India" />
                   </div>
                   <div className="space-y-2">
