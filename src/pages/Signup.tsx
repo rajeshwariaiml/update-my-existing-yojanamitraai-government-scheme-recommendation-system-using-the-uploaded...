@@ -19,12 +19,12 @@ const Signup = () => {
   const t = useTranslation();
 
   const validateForm = (): string | null => {
-    if (!fullName.trim()) return "Please enter your full name.";
-    if (!email.trim()) return "Please enter your email address.";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Please enter a valid email address.";
-    if (password.length < 6) return "Password must be at least 6 characters.";
-    if (!/[A-Z]/.test(password)) return "Password must contain at least one uppercase letter.";
-    if (!/[0-9]/.test(password)) return "Password must contain at least one number.";
+    if (!fullName.trim()) return t("validation_full_name");
+    if (!email.trim()) return t("validation_email_required");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return t("validation_email_valid");
+    if (password.length < 6) return t("validation_password_length");
+    if (!/[A-Z]/.test(password)) return t("validation_password_uppercase");
+    if (!/[0-9]/.test(password)) return t("validation_password_number");
     return null;
   };
 
@@ -32,7 +32,7 @@ const Signup = () => {
     e.preventDefault();
     const validationError = validateForm();
     if (validationError) {
-      toast({ title: "Validation Error", description: validationError, variant: "destructive" });
+      toast({ title: t("validation_error"), description: validationError, variant: "destructive" });
       return;
     }
     setLoading(true);
@@ -46,16 +46,16 @@ const Signup = () => {
     if (error) {
       let description = error.message;
       if (error.message.includes("already registered") || error.message.includes("already exists")) {
-        description = "An account with this email already exists. Please sign in instead.";
+        description = t("toast_account_exists");
       }
-      toast({ title: "Signup Failed", description, variant: "destructive" });
+      toast({ title: t("toast_signup_failed"), description, variant: "destructive" });
       return;
     }
 
     if (data?.user) {
       toast({
-        title: "🎉 Account Created Successfully!",
-        description: `Welcome, ${fullName}! Redirecting to your dashboard...`,
+        title: t("toast_signup_success_title"),
+        description: t("toast_signup_success_desc", { name: fullName }),
       });
       setTimeout(() => navigate("/dashboard"), 1200);
     }
@@ -78,7 +78,7 @@ const Signup = () => {
         <form onSubmit={handleSignup} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">{t("name")}</Label>
-            <Input id="name" placeholder="Your full name" value={fullName} onChange={e => setFullName(e.target.value)} required />
+            <Input id="name" placeholder={t("name_placeholder")} value={fullName} onChange={e => setFullName(e.target.value)} required />
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">{t("email")}</Label>

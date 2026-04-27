@@ -5,6 +5,11 @@ import { useLanguage } from "@/context/LanguageContext";
 import { translateMissingCriterion } from "@/lib/translateScheme";
 import { localizeSchemeObject } from "@/lib/localizeSchemeObject";
 
+const asArray = (value?: string[] | string | null) => {
+  if (!value) return [];
+  return Array.isArray(value) ? value.filter(Boolean) : [value].filter(Boolean);
+};
+
 export interface SchemeResult {
   id: string;
   scheme_name: string;
@@ -41,6 +46,24 @@ export interface SchemeResult {
   criteria_en?: string[] | string;
   criteria_kn?: string[] | string;
   explanation_kn?: string;
+  tags?: string[] | string;
+  tags_en?: string[] | string;
+  tags_kn?: string[] | string;
+  beneficiary_labels?: string[] | string;
+  beneficiary_labels_en?: string[] | string;
+  beneficiary_labels_kn?: string[] | string;
+  audience?: string;
+  audience_en?: string;
+  audience_kn?: string;
+  scope?: string;
+  scope_en?: string;
+  scope_kn?: string;
+  scheme_type?: string;
+  scheme_type_en?: string;
+  scheme_type_kn?: string;
+  region?: string;
+  region_en?: string;
+  region_kn?: string;
 }
 
 interface SchemeCardProps {
@@ -70,6 +93,17 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
   const displayCategory = scheme.category;
   const displayTarget = scheme.target_group;
   const displayState = scheme.state;
+  const metadataBadges = [
+    displayCategory,
+    displayTarget,
+    displayState,
+    scheme.scope,
+    scheme.audience,
+    scheme.scheme_type,
+    scheme.region,
+    ...asArray(scheme.beneficiary_labels),
+    ...asArray(scheme.tags),
+  ].filter((value, index, list) => value && list.indexOf(value) === index);
 
   return (
     <div className="bg-card border border-border rounded-lg p-5 card-hover space-y-3">
@@ -77,9 +111,11 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
         <div className="flex-1 min-w-0">
           <h3 className="font-display font-semibold text-card-foreground text-base leading-snug">{displayTitle}</h3>
           <div className="flex flex-wrap gap-1.5 mt-2">
-            <Badge variant="secondary" className="text-xs">{displayCategory}</Badge>
-            <Badge variant="outline" className="text-xs">{displayTarget}</Badge>
-            {displayState && <Badge variant="outline" className="text-xs">{displayState}</Badge>}
+            {metadataBadges.map((label, index) => (
+              <Badge key={`${label}-${index}`} variant={index === 0 ? "secondary" : "outline"} className="text-xs">
+                {label}
+              </Badge>
+            ))}
           </div>
         </div>
         <div className="text-right shrink-0">

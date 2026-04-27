@@ -14,15 +14,15 @@ const LanguageToggle = ({ className }: Props) => {
       size="sm"
       onClick={toggleLanguage}
       className={`gap-1.5 ${className ?? ""}`}
-      aria-label="Toggle language"
-      title={language === "en" ? "Switch to Kannada" : "Switch to English"}
+      aria-label={language === "en" ? "Switch to Kannada" : "ಭಾಷೆ ಬದಲಿಸಿ"}
+      title={language === "en" ? "Switch to Kannada" : "ಭಾಷೆ ಬದಲಿಸಿ"}
     >
       <Languages className="h-4 w-4" />
       <span className="font-medium">
         {language === "en" ? "English" : "ಕನ್ನಡ"}
       </span>
       <span className="text-muted-foreground text-xs">
-        {language === "en" ? "| ಕನ್ನಡ" : "| English"}
+        {language === "en" ? "| ಕನ್ನಡ" : "| ಇಂಗ್ಲಿಷ್"}
       </span>
     </Button>
   );

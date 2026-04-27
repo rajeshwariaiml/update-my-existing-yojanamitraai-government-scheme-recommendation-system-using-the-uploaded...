@@ -12,7 +12,8 @@ import { Plus, Pencil, Trash2, Loader2, ShieldCheck, ShieldAlert } from "lucide-
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
-import { useTranslation } from "@/context/LanguageContext";
+import { useLanguage } from "@/context/LanguageContext";
+import { translateMetadataValue, translateState } from "@/lib/translateScheme";
 
 interface SchemeForm {
   scheme_name: string; category: string; target_group: string; income_limit: string;
@@ -36,7 +37,7 @@ const AdminPanel = () => {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const t = useTranslation();
+  const { language, t } = useLanguage();
 
   useEffect(() => {
     const checkAccess = async () => {
@@ -69,7 +70,7 @@ const AdminPanel = () => {
 
   const handleSave = async () => {
     if (!form.scheme_name || !form.category || !form.benefits) {
-      toast({ title: "Fill required fields (name, category, benefits)", variant: "destructive" });
+      toast({ title: t("fill_required_fields"), variant: "destructive" });
       return;
     }
     setSaving(true);
@@ -93,12 +94,12 @@ const AdminPanel = () => {
 
     if (editingId) {
       const { error } = await supabase.from("schemes").update(payload).eq("id", editingId);
-      if (error) toast({ title: "Error updating", variant: "destructive" });
-      else toast({ title: "Scheme updated!" });
+      if (error) toast({ title: t("error_updating"), variant: "destructive" });
+      else toast({ title: t("scheme_updated") });
     } else {
       const { error } = await supabase.from("schemes").insert(payload);
-      if (error) toast({ title: "Error adding scheme", description: error.message, variant: "destructive" });
-      else toast({ title: "Scheme added!" });
+      if (error) toast({ title: t("error_adding_scheme"), description: error.message, variant: "destructive" });
+      else toast({ title: t("scheme_added") });
     }
     setForm(emptyForm);
     setEditingId(null);
@@ -120,8 +121,8 @@ const AdminPanel = () => {
 
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from("schemes").delete().eq("id", id);
-    if (error) toast({ title: "Error deleting", variant: "destructive" });
-    else { toast({ title: "Scheme deleted" }); loadSchemes(); }
+    if (error) toast({ title: t("error_deleting"), variant: "destructive" });
+    else { toast({ title: t("scheme_deleted") }); loadSchemes(); }
   };
 
   if (isAdmin === false) {
@@ -164,87 +165,87 @@ const AdminPanel = () => {
               <div className="bg-card border border-border rounded-lg p-6 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Scheme Name *</Label>
+                    <Label>{t("scheme_name")} *</Label>
                     <Input value={form.scheme_name} onChange={e => setForm({ ...form, scheme_name: e.target.value })} placeholder="e.g. PM Kisan Samman Nidhi" />
                   </div>
                   <div className="space-y-2">
-                    <Label>Category *</Label>
+                    <Label>{t("category")} *</Label>
                     <Select value={form.category} onValueChange={v => setForm({ ...form, category: v })}>
                       <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                       <SelectContent>
                         {["Agriculture", "Education", "Health", "Housing", "Employment", "Women & Child", "Social Welfare", "Skill Development", "Financial Inclusion", "Other"].map(c =>
-                          <SelectItem key={c} value={c}>{c}</SelectItem>
+                          <SelectItem key={c} value={c}>{translateMetadataValue(c, language)}</SelectItem>
                         )}
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>Target Group</Label>
+                    <Label>{t("target_group")}</Label>
                     <Input value={form.target_group} onChange={e => setForm({ ...form, target_group: e.target.value })} placeholder="e.g. SC/ST Students, Farmers" />
                   </div>
                   <div className="space-y-2">
-                    <Label>Income Limit (₹)</Label>
+                    <Label>{t("income_limit")}</Label>
                     <Input type="number" value={form.income_limit} onChange={e => setForm({ ...form, income_limit: e.target.value })} placeholder="e.g. 250000" />
                   </div>
                   <div className="space-y-2">
-                    <Label>Min Age</Label>
+                    <Label>{t("min_age")}</Label>
                     <Input type="number" value={form.min_age} onChange={e => setForm({ ...form, min_age: e.target.value })} placeholder="0" />
                   </div>
                   <div className="space-y-2">
-                    <Label>Max Age</Label>
+                    <Label>{t("max_age")}</Label>
                     <Input type="number" value={form.max_age} onChange={e => setForm({ ...form, max_age: e.target.value })} placeholder="100" />
                   </div>
                   <div className="space-y-2">
-                    <Label>State</Label>
+                    <Label>{t("state")}</Label>
                     <Input value={form.state} onChange={e => setForm({ ...form, state: e.target.value })} placeholder="All India" />
                   </div>
                   <div className="space-y-2">
-                    <Label>Gender</Label>
+                    <Label>{t("gender")}</Label>
                     <Select value={form.gender} onValueChange={v => setForm({ ...form, gender: v })}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="All">All</SelectItem>
-                        <SelectItem value="Male">Male</SelectItem>
-                        <SelectItem value="Female">Female</SelectItem>
+                        <SelectItem value="All">{translateMetadataValue("All", language)}</SelectItem>
+                        <SelectItem value="Male">{t("male")}</SelectItem>
+                        <SelectItem value="Female">{t("female")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>Education Level</Label>
+                    <Label>{t("education_level")}</Label>
                     <Input value={form.education_level} onChange={e => setForm({ ...form, education_level: e.target.value })} placeholder="e.g. Graduate" />
                   </div>
                   <div className="space-y-2">
-                    <Label>Occupation</Label>
+                    <Label>{t("occupation")}</Label>
                     <Input value={form.occupation} onChange={e => setForm({ ...form, occupation: e.target.value })} placeholder="e.g. Farmer, Student" />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <Label>Documents Required (comma-separated)</Label>
+                    <Label>{t("documents_required")}</Label>
                     <Input value={form.documents_required} onChange={e => setForm({ ...form, documents_required: e.target.value })} placeholder="Aadhaar, Income Certificate, Caste Certificate" />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <Label>Benefits *</Label>
+                    <Label>{t("benefits")} *</Label>
                     <Textarea value={form.benefits} onChange={e => setForm({ ...form, benefits: e.target.value })} placeholder="Describe the scheme benefits..." />
                   </div>
                   <div className="space-y-2">
-                    <Label>Deadline</Label>
+                    <Label>{t("deadline")}</Label>
                     <Input value={form.deadline} onChange={e => setForm({ ...form, deadline: e.target.value })} placeholder="e.g. March 31, 2026" />
                   </div>
                   <div className="space-y-2">
-                    <Label>Official Link</Label>
+                    <Label>{t("official_link")}</Label>
                     <Input value={form.official_link} onChange={e => setForm({ ...form, official_link: e.target.value })} placeholder="https://..." />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <Label>Description</Label>
+                    <Label>{t("description")}</Label>
                     <Textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Full scheme description..." />
                   </div>
                 </div>
                 <div className="flex gap-2">
                   <Button onClick={handleSave} disabled={saving} className="gap-2">
                     {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-                    {editingId ? "Update Scheme" : "Add Scheme"}
+                    {editingId ? t("update_scheme") : t("add_scheme")}
                   </Button>
                   {editingId && (
-                    <Button variant="outline" onClick={() => { setEditingId(null); setForm(emptyForm); }}>Cancel</Button>
+                    <Button variant="outline" onClick={() => { setEditingId(null); setForm(emptyForm); }}>{t("cancel")}</Button>
                   )}
                 </div>
               </div>
@@ -254,7 +255,7 @@ const AdminPanel = () => {
               {loading ? (
                 <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
               ) : schemes.length === 0 ? (
-                <div className="text-center py-16 text-muted-foreground">No schemes added yet.</div>
+                <div className="text-center py-16 text-muted-foreground">{t("no_schemes_added")}</div>
               ) : (
                 <div className="space-y-3">
                   {schemes.map(s => (
@@ -262,9 +263,9 @@ const AdminPanel = () => {
                       <div className="min-w-0 flex-1">
                         <h3 className="font-display font-semibold text-sm">{s.scheme_name}</h3>
                         <div className="flex flex-wrap gap-1.5 mt-1">
-                          <Badge variant="secondary" className="text-xs">{s.category}</Badge>
-                          <Badge variant="outline" className="text-xs">{s.state}</Badge>
-                          <Badge variant="outline" className="text-xs">{s.target_group}</Badge>
+                          <Badge variant="secondary" className="text-xs">{translateMetadataValue(s.category, language)}</Badge>
+                          <Badge variant="outline" className="text-xs">{translateState(s.state, language)}</Badge>
+                          <Badge variant="outline" className="text-xs">{translateMetadataValue(s.target_group, language)}</Badge>
                         </div>
                         <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{s.benefits}</p>
                       </div>

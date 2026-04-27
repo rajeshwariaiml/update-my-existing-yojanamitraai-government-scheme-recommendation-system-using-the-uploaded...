@@ -8,6 +8,10 @@ const CATEGORY_KN: Record<string, string> = {
   employment: "ಉದ್ಯೋಗ",
   health: "ಆರೋಗ್ಯ",
   healthcare: "ಆರೋಗ್ಯ",
+  "women & child": "ಮಹಿಳೆ ಮತ್ತು ಮಕ್ಕಳ ಅಭಿವೃದ್ಧಿ",
+  "women & child development": "ಮಹಿಳೆ ಮತ್ತು ಮಕ್ಕಳ ಅಭಿವೃದ್ಧಿ",
+  "social welfare": "ಸಾಮಾಜಿಕ ಕಲ್ಯಾಣ",
+  "financial inclusion": "ಹಣಕಾಸು ಒಳಗೊಳ್ಳಿಕೆ",
   entrepreneurship: "ಉದ್ಯಮಿತ್ವ",
   women: "ಮಹಿಳೆಯರು",
   youth: "ಯುವಕರು",
@@ -27,16 +31,23 @@ const CATEGORY_KN: Record<string, string> = {
 
 const TARGET_KN: Record<string, string> = {
   "all": "ಎಲ್ಲರೂ",
+  "all citizens": "ಎಲ್ಲ ನಾಗರಿಕರು",
+  "all indian citizens": "ಎಲ್ಲ ಭಾರತೀಯ ನಾಗರಿಕರು",
+  "all indian residents": "ಎಲ್ಲ ಭಾರತೀಯ ನಿವಾಸಿಗಳು",
   "students": "ವಿದ್ಯಾರ್ಥಿಗಳು",
   "sc students": "SC ವಿದ್ಯಾರ್ಥಿಗಳು",
   "st students": "ST ವಿದ್ಯಾರ್ಥಿಗಳು",
   "obc students": "OBC ವಿದ್ಯಾರ್ಥಿಗಳು",
   "farmers": "ರೈತರು",
+  "farmer families": "ರೈತ ಕುಟುಂಬಗಳು",
   "women": "ಮಹಿಳೆಯರು",
+  "women & sc/st": "ಮಹಿಳೆಯರು ಮತ್ತು SC/ST ವರ್ಗಗಳು",
+  "women & sc/st entrepreneurs": "ಮಹಿಳಾ ಮತ್ತು SC/ST ಉದ್ಯಮಿಗಳು",
   "youth": "ಯುವಕರು",
   "senior citizens": "ಹಿರಿಯ ನಾಗರಿಕರು",
   "minorities": "ಅಲ್ಪಸಂಖ್ಯಾತರು",
   "entrepreneurs": "ಉದ್ಯಮಿಗಳು",
+  "small entrepreneurs": "ಸಣ್ಣ ಉದ್ಯಮಿಗಳು",
   "unemployed": "ನಿರುದ್ಯೋಗಿಗಳು",
   "general": "ಸಾಮಾನ್ಯ",
   "bpl families": "BPL ಕುಟುಂಬಗಳು",
@@ -46,10 +57,26 @@ const TARGET_KN: Record<string, string> = {
   "urban poor": "ನಗರ ಬಡವರು",
   "rural poor": "ಗ್ರಾಮೀಣ ಬಡವರು",
   "artisans": "ಕುಶಲಕರ್ಮಿಗಳು",
+  "traditional artisans": "ಪಾರಂಪರಿಕ ಕುಶಲಕರ್ಮಿಗಳು",
   "workers": "ಕಾರ್ಮಿಕರು",
+  "unorganised workers": "ಅಸಂಘಟಿತ ಕಾರ್ಮಿಕರು",
   "girls": "ಹುಡುಗಿಯರು",
   "boys": "ಹುಡುಗರು",
   "children": "ಮಕ್ಕಳು",
+  "girl child": "ಹೆಣ್ಣು ಮಗು",
+  "girl child under 10": "10 ವರ್ಷಕ್ಕಿಂತ ಕಡಿಮೆ ವಯಸ್ಸಿನ ಹೆಣ್ಣು ಮಗು",
+  "pregnant women": "ಗರ್ಭಿಣಿ ಮಹಿಳೆಯರು",
+  "widows": "ವಿಧವೆಯರು",
+  "school children": "ಶಾಲಾ ಮಕ್ಕಳು",
+  "school students": "ಶಾಲಾ ವಿದ್ಯಾರ್ಥಿಗಳು",
+  "class 9-12 students": "9-12ನೇ ತರಗತಿ ವಿದ್ಯಾರ್ಥಿಗಳು",
+  "girl students": "ವಿದ್ಯಾರ್ಥಿನಿಯರು",
+  "disabled students": "ಅಂಗವಿಕಲ ವಿದ್ಯಾರ್ಥಿಗಳು",
+  "science students": "ವಿಜ್ಞಾನ ವಿದ್ಯಾರ್ಥಿಗಳು",
+  "disabled persons": "ಅಂಗವಿಕಲ ವ್ಯಕ್ತಿಗಳು",
+  "adults 18-50": "18-50 ವಯಸ್ಸಿನ ವಯಸ್ಕರು",
+  "adults 18-65": "18-65 ವಯಸ್ಸಿನ ವಯಸ್ಕರು",
+  "adults 18-70": "18-70 ವಯಸ್ಸಿನ ವಯಸ್ಕರು",
   "elderly": "ವೃದ್ಧರು",
   "disabled": "ಅಂಗವಿಕಲರು",
   "differently abled": "ವಿಶೇಷ ಚೇತನರು",
@@ -80,6 +107,45 @@ const lookup = (map: Record<string, string>, value?: string | null) => {
   return map[key] ?? value;
 };
 
+const METADATA_KN: Record<string, string> = {
+  ...CATEGORY_KN,
+  ...TARGET_KN,
+  ...STATE_KN,
+  national: "ರಾಷ್ಟ್ರೀಯ",
+  central: "ಕೇಂದ್ರ",
+  state: "ರಾಜ್ಯ",
+  regional: "ಪ್ರಾದೇಶಿಕ",
+  rural: "ಗ್ರಾಮೀಣ",
+  urban: "ನಗರ",
+  individual: "ವೈಯಕ್ತಿಕ",
+  family: "ಕುಟುಂಬ",
+  loan: "ಸಾಲ",
+  subsidy: "ಸಬ್ಸಿಡಿ",
+  scholarship: "ವಿದ್ಯಾರ್ಥಿವೇತನ",
+  pension: "ಪಿಂಚಣಿ",
+  insurance: "ವಿಮೆ",
+  welfare: "ಕಲ್ಯಾಣ",
+  student: "ವಿದ್ಯಾರ್ಥಿ",
+  farmer: "ರೈತ",
+  "self-employed": "ಸ್ವಯಂ ಉದ್ಯೋಗಿ",
+  salaried: "ವೇತನಭೋಗಿ",
+  retired: "ನಿವೃತ್ತರು",
+  homemaker: "ಗೃಹಿಣಿ",
+  entrepreneur: "ಉದ್ಯಮಿ",
+  "below 10th": "10ನೇ ತರಗತಿಗಿಂತ ಕಡಿಮೆ",
+  "10th pass": "10ನೇ ತರಗತಿ ಪಾಸ್",
+  "12th pass": "12ನೇ ತರಗತಿ ಪಾಸ್",
+  graduate: "ಪದವೀಧರ",
+  "post graduate": "ಸ್ನಾತಕೋತ್ತರ",
+  phd: "ಪಿಎಚ್‌ಡಿ",
+  "diploma/iti": "ಡಿಪ್ಲೊಮಾ/ಐಟಿಐ",
+  sc: "SC",
+  st: "ST",
+  obc: "OBC",
+  ews: "EWS",
+  minority: "ಅಲ್ಪಸಂಖ್ಯಾತ",
+};
+
 export const translateCategory = (value: string | null | undefined, lang: Lang) =>
   lang === "kn" ? lookup(CATEGORY_KN, value) : (value ?? "");
 
@@ -94,6 +160,20 @@ export const translateTargetGroup = (value: string | null | undefined, lang: Lan
 
 export const translateState = (value: string | null | undefined, lang: Lang) =>
   lang === "kn" ? lookup(STATE_KN, value) : (value ?? "");
+
+export const translateMetadataValue = (value: string | number | null | undefined, lang: Lang) => {
+  if (value === null || value === undefined) return "";
+  const text = String(value);
+  if (lang !== "kn") return text;
+  const direct = lookup(METADATA_KN, text);
+  return direct === text ? phraseTranslate(text) : direct;
+};
+
+export const translateMetadataList = (value: string[] | string | null | undefined, lang: Lang) => {
+  if (!value) return value ?? undefined;
+  if (Array.isArray(value)) return value.map((item) => translateMetadataValue(item, lang));
+  return translateMetadataValue(value, lang);
+};
 
 // Translate a free-text fallback explanation produced by the local matcher
 // Mapping of attribute names emitted by ml_pipeline/explainability_engine.py
@@ -156,6 +236,37 @@ export const translateExplanation = (text: string | undefined, lang: Lang) => {
 // when no *_kn variant is present in the dataset.
 const PHRASE_KN: Array<[RegExp, string]> = [
   // ---- Order matters: longer / multi-word phrases first ----
+  [/Women\s*&\s*SC\/ST entrepreneurs?/gi, "ಮಹಿಳಾ ಮತ್ತು SC/ST ಉದ್ಯಮಿಗಳು"],
+  [/Women\s*&\s*SC\/ST/gi, "ಮಹಿಳೆಯರು ಮತ್ತು SC/ST ವರ್ಗಗಳು"],
+  [/Financial Inclusion/gi, "ಹಣಕಾಸು ಒಳಗೊಳ್ಳಿಕೆ"],
+  [/Traditional Artisans/gi, "ಪಾರಂಪರಿಕ ಕುಶಲಕರ್ಮಿಗಳು"],
+  [/All Indian residents/gi, "ಎಲ್ಲ ಭಾರತೀಯ ನಿವಾಸಿಗಳು"],
+  [/All Indian citizens/gi, "ಎಲ್ಲ ಭಾರತೀಯ ನಾಗರಿಕರು"],
+  [/All citizens/gi, "ಎಲ್ಲ ನಾಗರಿಕರು"],
+  [/Target\s*:\s*SC\/ST categor(y|ies)/gi, "ಗುರಿ: SC/ST ವರ್ಗಗಳು"],
+  [/Target\s*group\s*:\s*/gi, "ಗುರಿ ಗುಂಪು: "],
+  [/Target\s*:\s*/gi, "ಗುರಿ: "],
+  [/SC\/ST categor(y|ies)/gi, "SC/ST ವರ್ಗಗಳು"],
+  [/Women & Child Development/gi, "ಮಹಿಳೆ ಮತ್ತು ಮಕ್ಕಳ ಅಭಿವೃದ್ಧಿ"],
+  [/Women & Child/gi, "ಮಹಿಳೆ ಮತ್ತು ಮಕ್ಕಳ ಅಭಿವೃದ್ಧಿ"],
+  [/Social Welfare/gi, "ಸಾಮಾಜಿಕ ಕಲ್ಯಾಣ"],
+  [/Girl child under 10/gi, "10 ವರ್ಷಕ್ಕಿಂತ ಕಡಿಮೆ ವಯಸ್ಸಿನ ಹೆಣ್ಣು ಮಗು"],
+  [/Girl child/gi, "ಹೆಣ್ಣು ಮಗು"],
+  [/Farmer families/gi, "ರೈತ ಕುಟುಂಬಗಳು"],
+  [/Small entrepreneurs?/gi, "ಸಣ್ಣ ಉದ್ಯಮಿಗಳು"],
+  [/Unorganised workers?/gi, "ಅಸಂಘಟಿತ ಕಾರ್ಮಿಕರು"],
+  [/Pregnant women/gi, "ಗರ್ಭಿಣಿ ಮಹಿಳೆಯರು"],
+  [/Senior citizens/gi, "ಹಿರಿಯ ನಾಗರಿಕರು"],
+  [/Disabled persons/gi, "ಅಂಗವಿಕಲ ವ್ಯಕ್ತಿಗಳು"],
+  [/Disabled students/gi, "ಅಂಗವಿಕಲ ವಿದ್ಯಾರ್ಥಿಗಳು"],
+  [/School children/gi, "ಶಾಲಾ ಮಕ್ಕಳು"],
+  [/School students/gi, "ಶಾಲಾ ವಿದ್ಯಾರ್ಥಿಗಳು"],
+  [/Class 9-12 students/gi, "9-12ನೇ ತರಗತಿ ವಿದ್ಯಾರ್ಥಿಗಳು"],
+  [/Girl students/gi, "ವಿದ್ಯಾರ್ಥಿನಿಯರು"],
+  [/Science students/gi, "ವಿಜ್ಞಾನ ವಿದ್ಯಾರ್ಥಿಗಳು"],
+  [/Adults 18-50/gi, "18-50 ವಯಸ್ಸಿನ ವಯಸ್ಕರು"],
+  [/Adults 18-65/gi, "18-65 ವಯಸ್ಸಿನ ವಯಸ್ಕರು"],
+  [/Adults 18-70/gi, "18-70 ವಯಸ್ಸಿನ ವಯಸ್ಕರು"],
   [/Must belong to BPL category/gi, "BPL ವರ್ಗಕ್ಕೆ ಸೇರಿರಬೇಕು"],
   [/Must belong to APL category/gi, "APL ವರ್ಗಕ್ಕೆ ಸೇರಿರಬೇಕು"],
   [/Below Poverty Line/gi, "ಬಡತನ ರೇಖೆಗಿಂತ ಕೆಳಗೆ"],
@@ -192,6 +303,7 @@ const PHRASE_KN: Array<[RegExp, string]> = [
   [/Services? sector/gi, "ಸೇವಾ ವಲಯ"],
   [/Women entrepreneurs?/gi, "ಮಹಿಳಾ ಉದ್ಯಮಿಗಳು"],
   [/Entrepreneurs?/gi, "ಉದ್ಯಮಿಗಳು"],
+  [/Artisans?/gi, "ಕುಶಲಕರ್ಮಿಗಳು"],
   [/Interest subsidy/gi, "ಬಡ್ಡಿ ಸಬ್ಸಿಡಿ"],
   [/Subsidi(z|s)ed interest/gi, "ಸಬ್ಸಿಡಿ ಬಡ್ಡಿ"],
   [/\binterest\b/gi, "ಬಡ್ಡಿ"],
@@ -209,6 +321,20 @@ const PHRASE_KN: Array<[RegExp, string]> = [
 
   // ---- Generic benefit / scheme nouns ----
   [/Financial assistance/gi, "ಆರ್ಥಿಕ ಸಹಾಯ"],
+  [/Government support/gi, "ಸರ್ಕಾರಿ ಬೆಂಬಲ"],
+  [/Government scheme/gi, "ಸರ್ಕಾರಿ ಯೋಜನೆ"],
+  [/Employment/gi, "ಉದ್ಯೋಗ"],
+  [/Education/gi, "ಶಿಕ್ಷಣ"],
+  [/Agriculture/gi, "ಕೃಷಿ"],
+  [/Healthcare/gi, "ಆರೋಗ್ಯ"],
+  [/Health/gi, "ಆರೋಗ್ಯ"],
+  [/Housing/gi, "ವಸತಿ"],
+  [/Women/gi, "ಮಹಿಳೆಯರು"],
+  [/Youth/gi, "ಯುವಕರು"],
+  [/Farmers?/gi, "ರೈತರು"],
+  [/Students?/gi, "ವಿದ್ಯಾರ್ಥಿಗಳು"],
+  [/Families/gi, "ಕುಟುಂಬಗಳು"],
+  [/Citizens/gi, "ನಾಗರಿಕರು"],
   [/Health insurance/gi, "ಆರೋಗ್ಯ ವಿಮೆ"],
   [/Insurance cover(age)?/gi, "ವಿಮಾ ರಕ್ಷಣೆ"],
   [/Pension/gi, "ಪಿಂಚಣಿ"],
@@ -244,6 +370,7 @@ const PHRASE_KN: Array<[RegExp, string]> = [
 
   // ---- Common short words (kept last; small risk of partial overlap) ----
   [/\ball india\b/gi, "ಅಖಿಲ ಭಾರತ"],
+  [/Karnataka/g, "ಕರ್ನಾಟಕ"],
   [/\bIndia\b/g, "ಭಾರತ"],
 ];
 

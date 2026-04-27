@@ -11,7 +11,8 @@ import { Search, MessageSquare, FileText, Loader2 } from "lucide-react";
 import SchemeCard, { type SchemeResult } from "@/components/SchemeCard";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useTranslation } from "@/context/LanguageContext";
+import { useLanguage } from "@/context/LanguageContext";
+import { translateMetadataValue, translateState } from "@/lib/translateScheme";
 
 const states = ["All India", "Andhra Pradesh", "Bihar", "Delhi", "Gujarat", "Haryana", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Punjab", "Rajasthan", "Tamil Nadu", "Telangana", "Uttar Pradesh", "West Bengal"];
 const occupations = ["Student", "Farmer", "Self-employed", "Salaried", "Unemployed", "Retired", "Homemaker", "Entrepreneur"];
@@ -25,7 +26,7 @@ const FindSchemes = () => {
   const [loading, setLoading] = useState(false);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const { toast } = useToast();
-  const t = useTranslation();
+  const { language, t } = useLanguage();
 
   // Hydrate saved scheme IDs from localStorage so toggle state survives refresh
   useEffect(() => {
@@ -63,7 +64,7 @@ const FindSchemes = () => {
   };
 
   const handleNlpSearch = async () => {
-    if (!nlpQuery.trim()) { toast({ title: "Please describe yourself", variant: "destructive" }); return; }
+    if (!nlpQuery.trim()) { toast({ title: t("toast_describe_yourself"), variant: "destructive" }); return; }
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("recommend-schemes", {
@@ -74,14 +75,14 @@ const FindSchemes = () => {
       setResults(recs);
       pushHistory(recs);
     } catch {
-      toast({ title: "Error fetching recommendations", variant: "destructive" });
+      toast({ title: t("toast_recommendation_error"), variant: "destructive" });
       await handleLocalFallback(nlpQuery);
     }
     setLoading(false);
   };
 
   const handleFormSearch = async () => {
-    if (!formData.age || !formData.state) { toast({ title: "Please fill age and state at minimum", variant: "destructive" }); return; }
+    if (!formData.age || !formData.state) { toast({ title: t("toast_age_state_required"), variant: "destructive" }); return; }
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("recommend-schemes", {
@@ -158,10 +159,10 @@ const FindSchemes = () => {
       localStorage.setItem("savedSchemes", JSON.stringify(nextList));
       setSavedIds(new Set(nextList.map((s) => s.id)));
       if (exists) {
-        toast({ title: "Removed from saved schemes" });
+          toast({ title: t("toast_removed_saved") });
       } else {
-        toast({ title: "Scheme saved!" });
-        pushNotification("Scheme saved", scheme.scheme_name);
+          toast({ title: t("toast_scheme_saved") });
+          pushNotification(t("toast_scheme_saved"), scheme.scheme_name);
       }
     } catch (e) {
       console.error("local save failed", e);
@@ -219,7 +220,7 @@ const FindSchemes = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>{t("age")} *</Label>
-                      <Input type="number" placeholder="e.g. 25" value={formData.age} onChange={e => setFormData({ ...formData, age: e.target.value })} />
+                      <Input type="number" placeholder={t("age_placeholder")} value={formData.age} onChange={e => setFormData({ ...formData, age: e.target.value })} />
                     </div>
                     <div className="space-y-2">
                       <Label>{t("gender")}</Label>
@@ -234,14 +235,14 @@ const FindSchemes = () => {
                     </div>
                     <div className="space-y-2">
                       <Label>{t("income")}</Label>
-                      <Input type="number" placeholder="e.g. 200000" value={formData.income} onChange={e => setFormData({ ...formData, income: e.target.value })} />
+                      <Input type="number" placeholder={t("income_placeholder")} value={formData.income} onChange={e => setFormData({ ...formData, income: e.target.value })} />
                     </div>
                     <div className="space-y-2">
                       <Label>{t("occupation")}</Label>
                       <Select onValueChange={v => setFormData({ ...formData, occupation: v })}>
                         <SelectTrigger><SelectValue placeholder={t("select")} /></SelectTrigger>
                         <SelectContent>
-                          {occupations.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                          {occupations.map(o => <SelectItem key={o} value={o}>{translateMetadataValue(o, language)}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -250,7 +251,7 @@ const FindSchemes = () => {
                       <Select onValueChange={v => setFormData({ ...formData, education_level: v })}>
                         <SelectTrigger><SelectValue placeholder={t("select")} /></SelectTrigger>
                         <SelectContent>
-                          {educationLevels.map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+                          {educationLevels.map(e => <SelectItem key={e} value={e}>{translateMetadataValue(e, language)}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -259,7 +260,7 @@ const FindSchemes = () => {
                       <Select onValueChange={v => setFormData({ ...formData, state: v })}>
                         <SelectTrigger><SelectValue placeholder={t("select")} /></SelectTrigger>
                         <SelectContent>
-                          {states.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                          {states.map(s => <SelectItem key={s} value={s}>{translateState(s, language)}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -268,13 +269,13 @@ const FindSchemes = () => {
                       <Select onValueChange={v => setFormData({ ...formData, category: v })}>
                         <SelectTrigger><SelectValue placeholder={t("select")} /></SelectTrigger>
                         <SelectContent>
-                          {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                          {categories.map(c => <SelectItem key={c} value={c}>{translateMetadataValue(c, language)}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
                       <Label>{t("goals")}</Label>
-                      <Input placeholder="e.g. Higher education, Housing" value={formData.goals} onChange={e => setFormData({ ...formData, goals: e.target.value })} />
+                      <Input placeholder={t("goals_placeholder")} value={formData.goals} onChange={e => setFormData({ ...formData, goals: e.target.value })} />
                     </div>
                   </div>
                   <Button onClick={handleFormSearch} disabled={loading} size="lg" className="w-full gap-2">
