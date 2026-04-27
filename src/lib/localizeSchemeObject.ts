@@ -3,6 +3,8 @@ import {
   translateCategory,
   translateExplanation,
   translateFreeText,
+  translateMetadataList,
+  translateMetadataValue,
   translateState,
   translateTargetGroup,
   type Lang,
@@ -40,6 +42,24 @@ export interface LocalizableScheme {
   state?: string | null;
   state_en?: string | null;
   state_kn?: string | null;
+  tags?: string[] | string;
+  tags_en?: string[] | string;
+  tags_kn?: string[] | string;
+  beneficiary_labels?: string[] | string;
+  beneficiary_labels_en?: string[] | string;
+  beneficiary_labels_kn?: string[] | string;
+  audience?: string;
+  audience_en?: string;
+  audience_kn?: string;
+  scope?: string;
+  scope_en?: string;
+  scope_kn?: string;
+  scheme_type?: string;
+  scheme_type_en?: string;
+  scheme_type_kn?: string;
+  region?: string;
+  region_en?: string;
+  region_kn?: string;
   deadline?: string | null;
 }
 
@@ -105,6 +125,17 @@ export const localizeSchemeObject = <T extends LocalizableScheme>(scheme: T, lan
     ?? (enriched.state_en || enriched.state
       ? translateFreeText(translateState(enriched.state_en ?? enriched.state, "kn"), "kn")
       : undefined);
+  const tagsKn = enriched.tags_kn ?? translateMetadataList(enriched.tags_en ?? enriched.tags, "kn");
+  const beneficiaryLabelsKn = enriched.beneficiary_labels_kn
+    ?? translateMetadataList(enriched.beneficiary_labels_en ?? enriched.beneficiary_labels, "kn");
+  const audienceKn = enriched.audience_kn
+    ?? (enriched.audience_en || enriched.audience ? translateMetadataValue(enriched.audience_en ?? enriched.audience, "kn") : undefined);
+  const scopeKn = enriched.scope_kn
+    ?? (enriched.scope_en || enriched.scope ? translateMetadataValue(enriched.scope_en ?? enriched.scope, "kn") : undefined);
+  const schemeTypeKn = enriched.scheme_type_kn
+    ?? (enriched.scheme_type_en || enriched.scheme_type ? translateMetadataValue(enriched.scheme_type_en ?? enriched.scheme_type, "kn") : undefined);
+  const regionKn = enriched.region_kn
+    ?? (enriched.region_en || enriched.region ? translateMetadataValue(enriched.region_en ?? enriched.region, "kn") : undefined);
 
   return {
     ...enriched,
@@ -117,6 +148,12 @@ export const localizeSchemeObject = <T extends LocalizableScheme>(scheme: T, lan
     target_group_kn: targetGroupKn,
     category_kn: categoryKn,
     state_kn: stateKn,
+    tags_kn: tagsKn,
+    beneficiary_labels_kn: beneficiaryLabelsKn,
+    audience_kn: audienceKn,
+    scope_kn: scopeKn,
+    scheme_type_kn: schemeTypeKn,
+    region_kn: regionKn,
     title: language === "kn" ? (titleKn || rawTitle) : rawTitle,
     description: localizeText(language, {
       kn: descriptionKn,
@@ -148,6 +185,12 @@ export const localizeSchemeObject = <T extends LocalizableScheme>(scheme: T, lan
     state: language === "kn"
       ? (stateKn || "")
       : (enriched.state_en ?? enriched.state ?? ""),
+    tags: language === "kn" ? tagsKn : (enriched.tags_en ?? enriched.tags),
+    beneficiary_labels: language === "kn" ? beneficiaryLabelsKn : (enriched.beneficiary_labels_en ?? enriched.beneficiary_labels),
+    audience: language === "kn" ? (audienceKn || "") : (enriched.audience_en ?? enriched.audience ?? ""),
+    scope: language === "kn" ? (scopeKn || "") : (enriched.scope_en ?? enriched.scope ?? ""),
+    scheme_type: language === "kn" ? (schemeTypeKn || "") : (enriched.scheme_type_en ?? enriched.scheme_type ?? ""),
+    region: language === "kn" ? (regionKn || "") : (enriched.region_en ?? enriched.region ?? ""),
     deadline_label: language === "kn" ? "ನಡೆಯುತ್ತಿದೆ" : "Ongoing",
   };
 };
