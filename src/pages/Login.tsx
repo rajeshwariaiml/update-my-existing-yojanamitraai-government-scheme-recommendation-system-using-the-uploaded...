@@ -20,11 +20,11 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) {
-      toast({ title: "Please fill in all fields", variant: "destructive" });
+      toast({ title: t("toast_fill_all_fields"), variant: "destructive" });
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      toast({ title: "Invalid email format", variant: "destructive" });
+      toast({ title: t("toast_invalid_email"), variant: "destructive" });
       return;
     }
     setLoading(true);
@@ -34,16 +34,16 @@ const Login = () => {
     if (error) {
       let description = error.message;
       if (error.message.includes("Invalid login")) {
-        description = "Incorrect email or password. Please try again.";
+        description = t("toast_incorrect_credentials");
       } else if (error.message.includes("Email not confirmed")) {
-        description = "Your email is not verified yet. Please check your inbox.";
+        description = t("toast_email_unverified");
       }
-      toast({ title: "Login Failed", description, variant: "destructive" });
+      toast({ title: t("toast_login_failed"), description, variant: "destructive" });
       return;
     }
 
-    const name = data.user?.user_metadata?.full_name || data.user?.email?.split("@")[0] || "User";
-    toast({ title: `Welcome back, ${name}!`, description: "Redirecting to your dashboard..." });
+    const name = data.user?.user_metadata?.full_name || data.user?.email?.split("@")[0] || t("user");
+    toast({ title: t("toast_welcome_back", { name }), description: t("toast_redirecting_dashboard") });
     setTimeout(() => navigate("/dashboard"), 800);
   };
 
