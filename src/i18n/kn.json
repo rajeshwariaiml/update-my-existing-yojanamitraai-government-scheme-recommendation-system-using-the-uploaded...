@@ -192,5 +192,6 @@
   "toast_signup_failed": "ಸೈನ್ ಅಪ್ ವಿಫಲವಾಗಿದೆ",
   "toast_signup_success_title": "🎉 ಖಾತೆ ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲಾಗಿದೆ!",
   "toast_signup_success_desc": "ಸ್ವಾಗತ, {name}! ನಿಮ್ಮ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ...",
-  "name_placeholder": "ನಿಮ್ಮ ಪೂರ್ಣ ಹೆಸರು"
+  "name_placeholder": "ನಿಮ್ಮ ಪೂರ್ಣ ಹೆಸರು",
+  "admin": "ನಿರ್ವಾಹಕ"
 }
