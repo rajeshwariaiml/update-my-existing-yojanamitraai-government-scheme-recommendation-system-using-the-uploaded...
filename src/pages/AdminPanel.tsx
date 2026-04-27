@@ -200,52 +200,52 @@ const AdminPanel = () => {
                     <Input value={form.state} onChange={e => setForm({ ...form, state: e.target.value })} placeholder="All India" />
                   </div>
                   <div className="space-y-2">
-                    <Label>Gender</Label>
+                    <Label>{t("gender")}</Label>
                     <Select value={form.gender} onValueChange={v => setForm({ ...form, gender: v })}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="All">All</SelectItem>
-                        <SelectItem value="Male">Male</SelectItem>
-                        <SelectItem value="Female">Female</SelectItem>
+                        <SelectItem value="All">{translateMetadataValue("All", language)}</SelectItem>
+                        <SelectItem value="Male">{t("male")}</SelectItem>
+                        <SelectItem value="Female">{t("female")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>Education Level</Label>
+                    <Label>{t("education_level")}</Label>
                     <Input value={form.education_level} onChange={e => setForm({ ...form, education_level: e.target.value })} placeholder="e.g. Graduate" />
                   </div>
                   <div className="space-y-2">
-                    <Label>Occupation</Label>
+                    <Label>{t("occupation")}</Label>
                     <Input value={form.occupation} onChange={e => setForm({ ...form, occupation: e.target.value })} placeholder="e.g. Farmer, Student" />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <Label>Documents Required (comma-separated)</Label>
+                    <Label>{t("documents_required")}</Label>
                     <Input value={form.documents_required} onChange={e => setForm({ ...form, documents_required: e.target.value })} placeholder="Aadhaar, Income Certificate, Caste Certificate" />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <Label>Benefits *</Label>
+                    <Label>{t("benefits")} *</Label>
                     <Textarea value={form.benefits} onChange={e => setForm({ ...form, benefits: e.target.value })} placeholder="Describe the scheme benefits..." />
                   </div>
                   <div className="space-y-2">
-                    <Label>Deadline</Label>
+                    <Label>{t("deadline")}</Label>
                     <Input value={form.deadline} onChange={e => setForm({ ...form, deadline: e.target.value })} placeholder="e.g. March 31, 2026" />
                   </div>
                   <div className="space-y-2">
-                    <Label>Official Link</Label>
+                    <Label>{t("official_link")}</Label>
                     <Input value={form.official_link} onChange={e => setForm({ ...form, official_link: e.target.value })} placeholder="https://..." />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <Label>Description</Label>
+                    <Label>{t("description")}</Label>
                     <Textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Full scheme description..." />
                   </div>
                 </div>
                 <div className="flex gap-2">
                   <Button onClick={handleSave} disabled={saving} className="gap-2">
                     {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-                    {editingId ? "Update Scheme" : "Add Scheme"}
+                    {editingId ? t("update_scheme") : t("add_scheme")}
                   </Button>
                   {editingId && (
-                    <Button variant="outline" onClick={() => { setEditingId(null); setForm(emptyForm); }}>Cancel</Button>
+                    <Button variant="outline" onClick={() => { setEditingId(null); setForm(emptyForm); }}>{t("cancel")}</Button>
                   )}
                 </div>
               </div>
@@ -255,7 +255,7 @@ const AdminPanel = () => {
               {loading ? (
                 <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
               ) : schemes.length === 0 ? (
-                <div className="text-center py-16 text-muted-foreground">No schemes added yet.</div>
+                <div className="text-center py-16 text-muted-foreground">{t("no_schemes_added")}</div>
               ) : (
                 <div className="space-y-3">
                   {schemes.map(s => (
@@ -263,9 +263,9 @@ const AdminPanel = () => {
                       <div className="min-w-0 flex-1">
                         <h3 className="font-display font-semibold text-sm">{s.scheme_name}</h3>
                         <div className="flex flex-wrap gap-1.5 mt-1">
-                          <Badge variant="secondary" className="text-xs">{s.category}</Badge>
-                          <Badge variant="outline" className="text-xs">{s.state}</Badge>
-                          <Badge variant="outline" className="text-xs">{s.target_group}</Badge>
+                          <Badge variant="secondary" className="text-xs">{translateMetadataValue(s.category, language)}</Badge>
+                          <Badge variant="outline" className="text-xs">{translateState(s.state, language)}</Badge>
+                          <Badge variant="outline" className="text-xs">{translateMetadataValue(s.target_group, language)}</Badge>
                         </div>
                         <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{s.benefits}</p>
                       </div>
