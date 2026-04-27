@@ -192,5 +192,6 @@
   "toast_signup_failed": "Signup Failed",
   "toast_signup_success_title": "🎉 Account Created Successfully!",
   "toast_signup_success_desc": "Welcome, {name}! Redirecting to your dashboard...",
-  "name_placeholder": "Your full name"
+  "name_placeholder": "Your full name",
+  "admin": "Admin"
 }
