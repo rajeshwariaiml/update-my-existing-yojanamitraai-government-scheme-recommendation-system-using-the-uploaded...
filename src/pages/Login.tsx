@@ -79,8 +79,8 @@ const Login = () => {
         <div className="mt-4 p-3 bg-muted/50 rounded-lg border border-border">
           <p className="text-xs text-muted-foreground text-center font-medium mb-1">{t("demo_accounts")}</p>
           <div className="text-xs text-muted-foreground space-y-0.5">
-            <p><strong>Admin:</strong> admin@yojanamitra.ai / Admin@123</p>
-            <p><strong>User:</strong> demo@yojanamitra.ai / Demo@123</p>
+            <p><strong>{t("admin")}:</strong> admin@yojanamitra.ai / Admin@123</p>
+            <p><strong>{t("user")}:</strong> demo@yojanamitra.ai / Demo@123</p>
           </div>
         </div>
 
