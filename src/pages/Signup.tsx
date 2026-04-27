@@ -54,7 +54,7 @@ const Signup = () => {
 
     if (data?.user) {
       toast({
-        title: "🎉 Account Created Successfully!",
+        title: t("toast_signup_success_title"),
         description: t("toast_signup_success_desc", { name: fullName }),
       });
       setTimeout(() => navigate("/dashboard"), 1200);
