@@ -8,6 +8,10 @@ const CATEGORY_KN: Record<string, string> = {
   employment: "ಉದ್ಯೋಗ",
   health: "ಆರೋಗ್ಯ",
   healthcare: "ಆರೋಗ್ಯ",
+  "women & child": "ಮಹಿಳೆ ಮತ್ತು ಮಕ್ಕಳ ಅಭಿವೃದ್ಧಿ",
+  "women & child development": "ಮಹಿಳೆ ಮತ್ತು ಮಕ್ಕಳ ಅಭಿವೃದ್ಧಿ",
+  "social welfare": "ಸಾಮಾಜಿಕ ಕಲ್ಯಾಣ",
+  "financial inclusion": "ಹಣಕಾಸು ಒಳಗೊಳ್ಳಿಕೆ",
   entrepreneurship: "ಉದ್ಯಮಿತ್ವ",
   women: "ಮಹಿಳೆಯರು",
   youth: "ಯುವಕರು",
@@ -27,16 +31,23 @@ const CATEGORY_KN: Record<string, string> = {
 
 const TARGET_KN: Record<string, string> = {
   "all": "ಎಲ್ಲರೂ",
+  "all citizens": "ಎಲ್ಲ ನಾಗರಿಕರು",
+  "all indian citizens": "ಎಲ್ಲ ಭಾರತೀಯ ನಾಗರಿಕರು",
+  "all indian residents": "ಎಲ್ಲ ಭಾರತೀಯ ನಿವಾಸಿಗಳು",
   "students": "ವಿದ್ಯಾರ್ಥಿಗಳು",
   "sc students": "SC ವಿದ್ಯಾರ್ಥಿಗಳು",
   "st students": "ST ವಿದ್ಯಾರ್ಥಿಗಳು",
   "obc students": "OBC ವಿದ್ಯಾರ್ಥಿಗಳು",
   "farmers": "ರೈತರು",
+  "farmer families": "ರೈತ ಕುಟುಂಬಗಳು",
   "women": "ಮಹಿಳೆಯರು",
+  "women & sc/st": "ಮಹಿಳೆಯರು ಮತ್ತು SC/ST ವರ್ಗಗಳು",
+  "women & sc/st entrepreneurs": "ಮಹಿಳಾ ಮತ್ತು SC/ST ಉದ್ಯಮಿಗಳು",
   "youth": "ಯುವಕರು",
   "senior citizens": "ಹಿರಿಯ ನಾಗರಿಕರು",
   "minorities": "ಅಲ್ಪಸಂಖ್ಯಾತರು",
   "entrepreneurs": "ಉದ್ಯಮಿಗಳು",
+  "small entrepreneurs": "ಸಣ್ಣ ಉದ್ಯಮಿಗಳು",
   "unemployed": "ನಿರುದ್ಯೋಗಿಗಳು",
   "general": "ಸಾಮಾನ್ಯ",
   "bpl families": "BPL ಕುಟುಂಬಗಳು",
@@ -46,10 +57,26 @@ const TARGET_KN: Record<string, string> = {
   "urban poor": "ನಗರ ಬಡವರು",
   "rural poor": "ಗ್ರಾಮೀಣ ಬಡವರು",
   "artisans": "ಕುಶಲಕರ್ಮಿಗಳು",
+  "traditional artisans": "ಪಾರಂಪರಿಕ ಕುಶಲಕರ್ಮಿಗಳು",
   "workers": "ಕಾರ್ಮಿಕರು",
+  "unorganised workers": "ಅಸಂಘಟಿತ ಕಾರ್ಮಿಕರು",
   "girls": "ಹುಡುಗಿಯರು",
   "boys": "ಹುಡುಗರು",
   "children": "ಮಕ್ಕಳು",
+  "girl child": "ಹೆಣ್ಣು ಮಗು",
+  "girl child under 10": "10 ವರ್ಷಕ್ಕಿಂತ ಕಡಿಮೆ ವಯಸ್ಸಿನ ಹೆಣ್ಣು ಮಗು",
+  "pregnant women": "ಗರ್ಭಿಣಿ ಮಹಿಳೆಯರು",
+  "widows": "ವಿಧವೆಯರು",
+  "school children": "ಶಾಲಾ ಮಕ್ಕಳು",
+  "school students": "ಶಾಲಾ ವಿದ್ಯಾರ್ಥಿಗಳು",
+  "class 9-12 students": "9-12ನೇ ತರಗತಿ ವಿದ್ಯಾರ್ಥಿಗಳು",
+  "girl students": "ವಿದ್ಯಾರ್ಥಿನಿಯರು",
+  "disabled students": "ಅಂಗವಿಕಲ ವಿದ್ಯಾರ್ಥಿಗಳು",
+  "science students": "ವಿಜ್ಞಾನ ವಿದ್ಯಾರ್ಥಿಗಳು",
+  "disabled persons": "ಅಂಗವಿಕಲ ವ್ಯಕ್ತಿಗಳು",
+  "adults 18-50": "18-50 ವಯಸ್ಸಿನ ವಯಸ್ಕರು",
+  "adults 18-65": "18-65 ವಯಸ್ಸಿನ ವಯಸ್ಕರು",
+  "adults 18-70": "18-70 ವಯಸ್ಸಿನ ವಯಸ್ಕರು",
   "elderly": "ವೃದ್ಧರು",
   "disabled": "ಅಂಗವಿಕಲರು",
   "differently abled": "ವಿಶೇಷ ಚೇತನರು",
@@ -80,6 +107,26 @@ const lookup = (map: Record<string, string>, value?: string | null) => {
   return map[key] ?? value;
 };
 
+const METADATA_KN: Record<string, string> = {
+  ...CATEGORY_KN,
+  ...TARGET_KN,
+  ...STATE_KN,
+  national: "ರಾಷ್ಟ್ರೀಯ",
+  central: "ಕೇಂದ್ರ",
+  state: "ರಾಜ್ಯ",
+  regional: "ಪ್ರಾದೇಶಿಕ",
+  rural: "ಗ್ರಾಮೀಣ",
+  urban: "ನಗರ",
+  individual: "ವೈಯಕ್ತಿಕ",
+  family: "ಕುಟುಂಬ",
+  loan: "ಸಾಲ",
+  subsidy: "ಸಬ್ಸಿಡಿ",
+  scholarship: "ವಿದ್ಯಾರ್ಥಿವೇತನ",
+  pension: "ಪಿಂಚಣಿ",
+  insurance: "ವಿಮೆ",
+  welfare: "ಕಲ್ಯಾಣ",
+};
+
 export const translateCategory = (value: string | null | undefined, lang: Lang) =>
   lang === "kn" ? lookup(CATEGORY_KN, value) : (value ?? "");
 
@@ -94,6 +141,20 @@ export const translateTargetGroup = (value: string | null | undefined, lang: Lan
 
 export const translateState = (value: string | null | undefined, lang: Lang) =>
   lang === "kn" ? lookup(STATE_KN, value) : (value ?? "");
+
+export const translateMetadataValue = (value: string | number | null | undefined, lang: Lang) => {
+  if (value === null || value === undefined) return "";
+  const text = String(value);
+  if (lang !== "kn") return text;
+  const direct = lookup(METADATA_KN, text);
+  return direct === text ? phraseTranslate(text) : direct;
+};
+
+export const translateMetadataList = (value: string[] | string | null | undefined, lang: Lang) => {
+  if (!value) return value ?? undefined;
+  if (Array.isArray(value)) return value.map((item) => translateMetadataValue(item, lang));
+  return translateMetadataValue(value, lang);
+};
 
 // Translate a free-text fallback explanation produced by the local matcher
 // Mapping of attribute names emitted by ml_pipeline/explainability_engine.py
