@@ -72,7 +72,6 @@ const localizeText = (
     kn?: MaybeText;
     en?: MaybeText;
     raw?: MaybeText;
-    fallbackTransform?: (value: string, language: Lang) => string;
   },
 ) => {
   if (language !== "kn") return options.en ?? options.raw ?? "";
@@ -80,14 +79,6 @@ const localizeText = (
   const knValue = options.kn?.trim();
   if (knValue) return translateFreeText(knValue, "kn");
   return "";
-};
-
-const localizeList = (language: Lang, value: MaybeList): MaybeList => {
-  if (!value) return value ?? undefined;
-  if (Array.isArray(value)) {
-    return value.map((item) => localizeText(language, { raw: item }));
-  }
-  return localizeText(language, { raw: value });
 };
 
 export const localizeSchemeObject = <T extends LocalizableScheme>(scheme: T, language: Lang) => {
