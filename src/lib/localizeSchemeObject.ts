@@ -79,12 +79,7 @@ const localizeText = (
 
   const knValue = options.kn?.trim();
   if (knValue) return translateFreeText(knValue, "kn");
-
-  const source = (options.en ?? options.raw ?? "").trim();
-  if (!source) return "";
-
-  const transformed = options.fallbackTransform ? options.fallbackTransform(source, "kn") : source;
-  return translateFreeText(transformed, "kn");
+  return "";
 };
 
 const localizeList = (language: Lang, value: MaybeList): MaybeList => {
@@ -99,47 +94,24 @@ export const localizeSchemeObject = <T extends LocalizableScheme>(scheme: T, lan
   const enriched = enrichWithMultilingual(scheme);
 
   const rawTitle = enriched.title_en ?? enriched.title ?? enriched.scheme_name ?? "";
-  const titleKn = enriched.title_kn ?? (rawTitle ? translateFreeText(rawTitle, "kn") : undefined);
-  const descriptionKn = enriched.description_kn
-    ?? (enriched.description_en || enriched.description
-      ? translateFreeText(enriched.description_en ?? enriched.description, "kn")
-      : undefined);
-  const benefitsKn = enriched.benefits_kn
-    ?? (enriched.benefits_en || enriched.benefits
-      ? translateFreeText(enriched.benefits_en ?? enriched.benefits, "kn")
-      : undefined);
-  const eligibilityKn = enriched.eligibility_kn
-    ?? (enriched.eligibility_en || enriched.eligibility
-      ? translateFreeText(enriched.eligibility_en ?? enriched.eligibility, "kn")
-      : undefined);
+  const titleKn = enriched.title_kn;
+  const descriptionKn = enriched.description_kn;
+  const benefitsKn = enriched.benefits_kn;
+  const eligibilityKn = enriched.eligibility_kn;
   const explanationSource = enriched.explanation_en ?? enriched.explanation;
   const explanationKn = enriched.explanation_kn
     ?? (explanationSource ? translateFreeText(translateExplanation(explanationSource, "kn"), "kn") : undefined);
-  const criteriaKn = enriched.criteria_kn ?? localizeList(language, enriched.criteria_en ?? enriched.criteria);
-  const targetGroupKn = enriched.target_group_kn
-    ?? (enriched.target_group_en || enriched.target_group
-      ? translateFreeText(translateTargetGroup(enriched.target_group_en ?? enriched.target_group, "kn"), "kn")
-      : undefined);
-  const categoryKn = enriched.category_kn
-    ?? (enriched.category_en || enriched.category
-      ? translateFreeText(translateCategory(enriched.category_en ?? enriched.category, "kn"), "kn")
-      : undefined);
-  const stateKn = enriched.state_kn
-    ?? (enriched.state_en || enriched.state
-      ? translateFreeText(translateState(enriched.state_en ?? enriched.state, "kn"), "kn")
-      : undefined);
-  const keywordsKn = enriched.keywords_kn ?? translateMetadataList(enriched.keywords_en ?? enriched.keywords, "kn");
-  const tagsKn = enriched.tags_kn ?? translateMetadataList(enriched.tags_en ?? enriched.tags, "kn");
-  const beneficiaryLabelsKn = enriched.beneficiary_labels_kn
-    ?? translateMetadataList(enriched.beneficiary_labels_en ?? enriched.beneficiary_labels, "kn");
-  const audienceKn = enriched.audience_kn
-    ?? (enriched.audience_en || enriched.audience ? translateMetadataValue(enriched.audience_en ?? enriched.audience, "kn") : undefined);
-  const scopeKn = enriched.scope_kn
-    ?? (enriched.scope_en || enriched.scope ? translateMetadataValue(enriched.scope_en ?? enriched.scope, "kn") : undefined);
-  const schemeTypeKn = enriched.scheme_type_kn
-    ?? (enriched.scheme_type_en || enriched.scheme_type ? translateMetadataValue(enriched.scheme_type_en ?? enriched.scheme_type, "kn") : undefined);
-  const regionKn = enriched.region_kn
-    ?? (enriched.region_en || enriched.region ? translateMetadataValue(enriched.region_en ?? enriched.region, "kn") : undefined);
+  const criteriaKn = enriched.criteria_kn;
+  const targetGroupKn = enriched.target_group_kn ? translateTargetGroup(enriched.target_group_kn, "kn") : undefined;
+  const categoryKn = enriched.category_kn ? translateCategory(enriched.category_kn, "kn") : undefined;
+  const stateKn = enriched.state_kn ? translateState(enriched.state_kn, "kn") : undefined;
+  const keywordsKn = enriched.keywords_kn ? translateMetadataList(enriched.keywords_kn, "kn") : undefined;
+  const tagsKn = enriched.tags_kn ? translateMetadataList(enriched.tags_kn, "kn") : undefined;
+  const beneficiaryLabelsKn = enriched.beneficiary_labels_kn ? translateMetadataList(enriched.beneficiary_labels_kn, "kn") : undefined;
+  const audienceKn = enriched.audience_kn ? translateMetadataValue(enriched.audience_kn, "kn") : undefined;
+  const scopeKn = enriched.scope_kn ? translateMetadataValue(enriched.scope_kn, "kn") : undefined;
+  const schemeTypeKn = enriched.scheme_type_kn ? translateMetadataValue(enriched.scheme_type_kn, "kn") : undefined;
+  const regionKn = enriched.region_kn ? translateMetadataValue(enriched.region_kn, "kn") : undefined;
 
   return {
     ...enriched,
