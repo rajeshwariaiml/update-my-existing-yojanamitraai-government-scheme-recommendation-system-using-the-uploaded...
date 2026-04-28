@@ -22,15 +22,17 @@ const AppRoutes = () => {
   useKannadaLeakValidator();
   return (
     <>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/find-schemes" element={<FindSchemes />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/admin" element={<AdminPanel />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <KannadaPreviewBlockingGate>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/find-schemes" element={<FindSchemes />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/admin" element={<AdminPanel />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </KannadaPreviewBlockingGate>
       <KannadaLeakOverlay />
       <KannadaPreviewAutoValidator />
     </>
