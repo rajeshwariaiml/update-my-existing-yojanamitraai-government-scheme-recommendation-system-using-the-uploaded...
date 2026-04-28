@@ -10,7 +10,7 @@ import { scanForEnglishLeaks, type LeakReport } from "@/lib/kannadaLeakScanner";
 const KannadaLeakOverlay = () => {
   const { language } = useLanguage();
   const location = useLocation();
-  const [report, setReport] = useState<LeakReport>({ total: 0, byComponent: {} });
+  const [report, setReport] = useState<LeakReport>({ total: 0, metadataTotal: 0, byComponent: {} });
   const [open, setOpen] = useState(true);
   const [hidden, setHidden] = useState(false);
 

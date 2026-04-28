@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { useKannadaLeakValidator } from "@/hooks/useKannadaLeakValidator";
 import KannadaLeakOverlay from "@/components/KannadaLeakOverlay";
+import KannadaPreviewAutoValidator from "@/components/KannadaPreviewAutoValidator";
 import Index from "./pages/Index";
 import FindSchemes from "./pages/FindSchemes";
 import Dashboard from "./pages/Dashboard";
@@ -30,6 +31,7 @@ const AppRoutes = () => {
         <Route path="*" element={<NotFound />} />
       </Routes>
       <KannadaLeakOverlay />
+      <KannadaPreviewAutoValidator />
     </>
   );
 };
