@@ -12,6 +12,7 @@ const CATEGORY_KN: Record<string, string> = {
   "women & child development": "ಮಹಿಳೆ ಮತ್ತು ಮಕ್ಕಳ ಅಭಿವೃದ್ಧಿ",
   "social welfare": "ಸಾಮಾಜಿಕ ಕಲ್ಯಾಣ",
   "financial inclusion": "ಆರ್ಥಿಕ ಒಳಗೊಳ್ಳಿಕೆ",
+  "ಹಣಕಾಸು ಒಳಗೊಳ್ಳಿಕೆ": "ಆರ್ಥಿಕ ಒಳಗೊಳ್ಳಿಕೆ",
   entrepreneurship: "ಉದ್ಯಮಿತ್ವ",
   women: "ಮಹಿಳೆಯರು",
   youth: "ಯುವಕರು",
