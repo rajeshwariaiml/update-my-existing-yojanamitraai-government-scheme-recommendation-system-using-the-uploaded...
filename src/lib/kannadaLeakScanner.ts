@@ -113,7 +113,7 @@ const describeElement = (el: Element): string => {
 const cleanWord = (word: string) => word.toLowerCase().replace(/[^a-z]/g, "");
 
 export const scanForEnglishLeaks = (): LeakReport => {
-  const report: LeakReport = { total: 0, byComponent: {} };
+  const report: LeakReport = { total: 0, metadataTotal: 0, byComponent: {} };
   if (typeof document === "undefined") return report;
 
   const root = document.body;
@@ -147,17 +147,24 @@ export const scanForEnglishLeaks = (): LeakReport => {
       const parent = node.parentElement!;
       const card = closestSchemeCard(parent);
       const schemeName = card?.querySelector("h3, h2, h1")?.textContent?.trim();
-      const componentKey = card ? `SchemeCard: ${schemeName ?? "(untitled)"}` : describeElement(parent);
+      const isMetadata = !!parent.closest("[data-meta-field]");
+      const componentKey = isMetadata
+        ? `SchemeCard metadata: ${schemeName ?? "(untitled)"}`
+        : card
+          ? `SchemeCard: ${schemeName ?? "(untitled)"}`
+          : describeElement(parent);
 
       const item: LeakItem = {
         text: text.trim().slice(0, 200),
         schemeName,
         selector: describeElement(parent),
         route,
+        isMetadata,
       };
       const bucket = (report.byComponent[componentKey] ??= []);
       bucket.push(item);
       report.total += 1;
+      if (isMetadata) report.metadataTotal += 1;
     }
 
     node = walker.nextNode();
