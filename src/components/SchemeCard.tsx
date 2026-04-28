@@ -112,7 +112,12 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
           <h3 className="font-display font-semibold text-card-foreground text-base leading-snug">{displayTitle}</h3>
           <div className="flex flex-wrap gap-1.5 mt-2">
             {metadataBadges.map((label, index) => (
-              <Badge key={`${label}-${index}`} variant={index === 0 ? "secondary" : "outline"} className="text-xs">
+              <Badge
+                key={`${label}-${index}`}
+                variant={index === 0 ? "secondary" : "outline"}
+                className="text-xs"
+                data-meta-field="true"
+              >
                 {label}
               </Badge>
             ))}
