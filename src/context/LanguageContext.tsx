@@ -59,7 +59,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     const toggleLanguage = () => setLanguageState((prev) => (prev === "en" ? "kn" : "en"));
     const t = (key: string, vars?: Record<string, string | number>) => {
       const dict = dictionaries[language] || dictionaries.en;
-      let str = dict[key] ?? dictionaries.en[key] ?? key;
+      let str = dict[key] ?? (language === "kn" ? "" : dictionaries.en[key]) ?? key;
       if (vars) {
         for (const [k, v] of Object.entries(vars)) {
           str = str.replace(new RegExp(`\\{${k}\\}`, "g"), String(v));
