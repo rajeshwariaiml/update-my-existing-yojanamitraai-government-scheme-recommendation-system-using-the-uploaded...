@@ -45,6 +45,9 @@ export interface LocalizableScheme {
   tags?: string[] | string;
   tags_en?: string[] | string;
   tags_kn?: string[] | string;
+  keywords?: string[] | string;
+  keywords_en?: string[] | string;
+  keywords_kn?: string[] | string;
   beneficiary_labels?: string[] | string;
   beneficiary_labels_en?: string[] | string;
   beneficiary_labels_kn?: string[] | string;
@@ -125,6 +128,7 @@ export const localizeSchemeObject = <T extends LocalizableScheme>(scheme: T, lan
     ?? (enriched.state_en || enriched.state
       ? translateFreeText(translateState(enriched.state_en ?? enriched.state, "kn"), "kn")
       : undefined);
+  const keywordsKn = enriched.keywords_kn ?? translateMetadataList(enriched.keywords_en ?? enriched.keywords, "kn");
   const tagsKn = enriched.tags_kn ?? translateMetadataList(enriched.tags_en ?? enriched.tags, "kn");
   const beneficiaryLabelsKn = enriched.beneficiary_labels_kn
     ?? translateMetadataList(enriched.beneficiary_labels_en ?? enriched.beneficiary_labels, "kn");
@@ -154,7 +158,7 @@ export const localizeSchemeObject = <T extends LocalizableScheme>(scheme: T, lan
     scope_kn: scopeKn,
     scheme_type_kn: schemeTypeKn,
     region_kn: regionKn,
-    title: language === "kn" ? (titleKn || rawTitle) : rawTitle,
+    title: language === "kn" ? (titleKn || "") : rawTitle,
     description: localizeText(language, {
       kn: descriptionKn,
       en: enriched.description_en,
@@ -185,6 +189,8 @@ export const localizeSchemeObject = <T extends LocalizableScheme>(scheme: T, lan
     state: language === "kn"
       ? (stateKn || "")
       : (enriched.state_en ?? enriched.state ?? ""),
+    keywords_kn: keywordsKn,
+    keywords: language === "kn" ? keywordsKn : (enriched.keywords_en ?? enriched.keywords),
     tags: language === "kn" ? tagsKn : (enriched.tags_en ?? enriched.tags),
     beneficiary_labels: language === "kn" ? beneficiaryLabelsKn : (enriched.beneficiary_labels_en ?? enriched.beneficiary_labels),
     audience: language === "kn" ? (audienceKn || "") : (enriched.audience_en ?? enriched.audience ?? ""),
