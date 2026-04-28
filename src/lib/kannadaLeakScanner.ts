@@ -11,6 +11,7 @@
 
 export interface LeakReport {
   total: number;
+  metadataTotal: number;
   byComponent: Record<string, LeakItem[]>;
 }
 
@@ -19,6 +20,7 @@ export interface LeakItem {
   schemeName?: string;
   selector: string;
   route: string;
+  isMetadata?: boolean;
 }
 
 // Words that are allowed to remain in English (brand, acronyms, units, etc.)
