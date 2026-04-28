@@ -4,6 +4,7 @@ import { Bookmark, ExternalLink, CheckCircle2, AlertTriangle, Clock } from "luci
 import { useLanguage } from "@/context/LanguageContext";
 import { translateMissingCriterion } from "@/lib/translateScheme";
 import { localizeSchemeObject } from "@/lib/localizeSchemeObject";
+import { formatSchemeDeadline } from "@/utils/dateFormatter";
 
 const asArray = (value?: string[] | string | null) => {
   if (!value) return [];
@@ -22,6 +23,7 @@ export interface SchemeResult {
   target_group_kn?: string;
   benefits: string;
   deadline?: string | null;
+  deadline_label?: string | null;
   official_link?: string | null;
   state?: string | null;
   state_en?: string | null;
@@ -49,6 +51,9 @@ export interface SchemeResult {
   tags?: string[] | string;
   tags_en?: string[] | string;
   tags_kn?: string[] | string;
+  keywords?: string[] | string;
+  keywords_en?: string[] | string;
+  keywords_kn?: string[] | string;
   beneficiary_labels?: string[] | string;
   beneficiary_labels_en?: string[] | string;
   beneficiary_labels_kn?: string[] | string;
@@ -93,17 +98,19 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
   const displayCategory = scheme.category;
   const displayTarget = scheme.target_group;
   const displayState = scheme.state;
+  const displayDeadline = formatSchemeDeadline(scheme.deadline, language) || scheme.deadline_label || t("ongoing");
   const metadataBadges = [
-    displayCategory,
-    displayTarget,
-    displayState,
-    scheme.scope,
-    scheme.audience,
-    scheme.scheme_type,
-    scheme.region,
-    ...asArray(scheme.beneficiary_labels),
-    ...asArray(scheme.tags),
-  ].filter((value, index, list) => value && list.indexOf(value) === index);
+    { field: "category", label: displayCategory },
+    { field: "target_group", label: displayTarget },
+    { field: "state", label: displayState },
+    { field: "scope", label: scheme.scope },
+    { field: "audience", label: scheme.audience },
+    { field: "scheme_type", label: scheme.scheme_type },
+    { field: "region", label: scheme.region },
+    ...asArray(scheme.beneficiary_labels).map((label) => ({ field: "beneficiary_labels", label })),
+    ...asArray(scheme.tags).map((label) => ({ field: "tags", label })),
+    ...asArray(scheme.keywords).map((label) => ({ field: "keywords", label })),
+  ].filter((item, index, list) => item.label && list.findIndex((v) => v.label === item.label) === index);
 
   return (
     <div className="bg-card border border-border rounded-lg p-5 card-hover space-y-3">
@@ -111,12 +118,12 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
         <div className="flex-1 min-w-0">
           <h3 className="font-display font-semibold text-card-foreground text-base leading-snug">{displayTitle}</h3>
           <div className="flex flex-wrap gap-1.5 mt-2">
-            {metadataBadges.map((label, index) => (
+            {metadataBadges.map(({ field, label }, index) => (
               <Badge
-                key={`${label}-${index}`}
+                key={`${field}-${label}-${index}`}
                 variant={index === 0 ? "secondary" : "outline"}
                 className="text-xs"
-                data-meta-field="true"
+                data-meta-field={field}
               >
                 {label}
               </Badge>
@@ -163,7 +170,7 @@ const SchemeCard = ({ scheme: rawScheme, onSave, isSaved }: SchemeCardProps) => 
 
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <Clock className="h-3.5 w-3.5" />
-        {t("deadline")} <span className="font-medium text-foreground">{scheme.deadline || scheme.deadline_label || t("ongoing")}</span>
+        {t("deadline")} <span className="font-medium text-foreground">{displayDeadline}</span>
       </div>
 
       <div className="flex items-center gap-2 pt-1">

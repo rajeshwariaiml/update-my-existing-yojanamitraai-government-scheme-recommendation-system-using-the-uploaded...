@@ -22,6 +22,8 @@ interface MultilingualScheme {
   state_kn?: string;
   target_group_en?: string;
   target_group_kn?: string;
+  keywords_en?: string[] | string;
+  keywords_kn?: string[] | string;
   tags_en?: string[] | string;
   tags_kn?: string[] | string;
   beneficiary_labels_en?: string[] | string;
@@ -84,6 +86,9 @@ export interface MultilingualFields {
   target_group?: string;
   target_group_en?: string;
   target_group_kn?: string;
+  keywords?: string[] | string;
+  keywords_en?: string[] | string;
+  keywords_kn?: string[] | string;
   tags?: string[] | string;
   tags_en?: string[] | string;
   tags_kn?: string[] | string;
@@ -137,6 +142,8 @@ export const enrichWithMultilingual = <T extends { scheme_name?: string; title?:
     state_kn: scheme.state_kn ?? match.state_kn,
     target_group_en: scheme.target_group_en ?? match.target_group_en,
     target_group_kn: scheme.target_group_kn ?? match.target_group_kn,
+    keywords_en: scheme.keywords_en ?? match.keywords_en,
+    keywords_kn: scheme.keywords_kn ?? match.keywords_kn,
     tags_en: scheme.tags_en ?? match.tags_en,
     tags_kn: scheme.tags_kn ?? match.tags_kn,
     beneficiary_labels_en: scheme.beneficiary_labels_en ?? match.beneficiary_labels_en,
